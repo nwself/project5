@@ -1,6 +1,7 @@
 package edu.cs5774.project5;
 
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -46,12 +47,34 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 
 		dataset = createDataset(project);
         JFreeChart chart = createChart(project.getName(), dataset);
-                
-		chartPanel = new ChartPanel(chart);
-		chartPanel.addChartMouseListener(this);
-		this.add(chartPanel);
+        
+		this.setProject(project);
 		
 		this.addKeyListener(this);
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+		
+		// Clear selection
+		ganttSelectionRenderer.setSelectedColumn(-1);
+		
+		// Rebuild dataset and chart
+		dataset = createDataset(project);
+		JFreeChart chart = createChart(project.getName(), dataset);
+		
+		if (chartPanel == null) {
+			// This case is for the call from the constructor
+			chartPanel = new ChartPanel(chart);
+			chartPanel.addChartMouseListener(this);
+			this.add(chartPanel);
+		} else {
+			// Show the new chart
+			chartPanel.setChart(chart);
+		}
+		
+		// By default the new project is selected
+		fireProjectSelected(project);
 	}
 	
 	private JFreeChart createChart(String chartTitle, IntervalCategoryDataset dataset) {
@@ -107,7 +130,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	
 	@Override
 	public void chartMouseClicked(ChartMouseEvent chartEvent) {
-        // Ask for keyboard input.		
+        // Ask for keyboard input
         this.requestFocusInWindow();
 		
 		ChartEntity chartEntity = chartEvent.getEntity();
@@ -140,7 +163,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 			this.setCursor(null);
 		}
 	}
-
+	
 	public void deleteSelectedElement() {
 		int selectedColumn = ganttSelectionRenderer.getSelectedColumn();
 		if (selectedColumn != -1) {
@@ -148,16 +171,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 			
 			if (taskBugs.containsKey(uniqueId)) {
 				project.removeTaskBug(taskBugs.get(uniqueId));
-				
-				// Clear selection
-				ganttSelectionRenderer.setSelectedColumn(-1);
-				
-				// Rebuild dataset and chart
-				dataset = createDataset(project);
-				JFreeChart chart = createChart(project.getName(), dataset);
-				
-				// Show the new chart
-				chartPanel.setChart(chart);
+				setProject(project);
 			}
 		}
 	}
