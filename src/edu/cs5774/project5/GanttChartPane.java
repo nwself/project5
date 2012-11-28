@@ -1,5 +1,6 @@
 package edu.cs5774.project5;
 
+import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +27,9 @@ import org.jfree.data.time.SimpleTimePeriod;
 
 public class GanttChartPane extends JPanel implements ChartMouseListener {
 
+	private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+	private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
+	
 	private Project project;
 	
 	private HashMap<String, TaskBug> taskBugs = new HashMap<>();
@@ -100,8 +104,15 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 	}
 
 	@Override
-	public void chartMouseMoved(ChartMouseEvent arg0) {
-		// Do nothing
+	public void chartMouseMoved(ChartMouseEvent chartEvent) {
+		ChartEntity chartEntity = chartEvent.getEntity();
+		if ((chartEntity instanceof CategoryItemEntity) || 
+				(chartEntity instanceof CategoryLabelEntity) ||
+				(chartEntity instanceof TitleEntity)) {
+			this.setCursor(HAND_CURSOR);
+		} else {
+			this.setCursor(DEFAULT_CURSOR);
+		}
 	}
 
 }
