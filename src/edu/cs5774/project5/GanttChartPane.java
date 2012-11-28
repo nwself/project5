@@ -27,7 +27,6 @@ import org.jfree.data.time.SimpleTimePeriod;
 
 public class GanttChartPane extends JPanel implements ChartMouseListener {
 
-	private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 	private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 	
 	private Project project;
@@ -111,7 +110,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 				(chartEntity instanceof TitleEntity)) {
 			this.setCursor(HAND_CURSOR);
 		} else {
-			this.setCursor(DEFAULT_CURSOR);
+			this.setCursor(null);
 		}
 	}
 
