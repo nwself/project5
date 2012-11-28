@@ -9,8 +9,8 @@ public class Project {
 	private Calendar createdAt;
 	private Calendar updatedAt;
 	
-	private LinkedList<User> users;
-	private LinkedList<TaskBug> taskBugs;
+	private LinkedList<User> users = new LinkedList<User>();
+	private LinkedList<TaskBug> taskBugs = new LinkedList<TaskBug>();
 	
 	public Project(String name, String description, Calendar createdAt,
 			Calendar updatedAt) {

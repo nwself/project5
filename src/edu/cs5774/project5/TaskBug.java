@@ -1,6 +1,7 @@
 package edu.cs5774.project5;
 
 import java.util.Calendar;
+import java.util.LinkedList;
 
 public class TaskBug {
 	enum Status {
@@ -25,6 +26,8 @@ public class TaskBug {
 	private Calendar updatedAt;
 	private boolean isTask;
 	
+	private LinkedList<User> users = new LinkedList<User>();
+	
 	public TaskBug(String title, Status status, Priority priority,
 			Calendar dueDate, Calendar estimatedDate,
 			double percentageCompleted, Calendar createdAt, Calendar updatedAt,
@@ -39,6 +42,10 @@ public class TaskBug {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.isTask = isTask;
+	}
+	
+	public void addUser(User user) {
+		users.add(user);
 	}
 	
 	public String getTitle() {
