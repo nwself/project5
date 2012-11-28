@@ -63,6 +63,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		dataset = createDataset(project);
 		JFreeChart chart = createChart(project.getName(), dataset);
 		
+		// Set up the new chart's panel
 		if (chartPanel == null) {
 			// This case is for the call from the constructor
 			chartPanel = new ChartPanel(chart);
