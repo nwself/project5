@@ -1,14 +1,10 @@
 package edu.cs5774.project5;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridLayout;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -21,7 +17,6 @@ import org.jfree.chart.entity.CategoryLabelEntity;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.TitleEntity;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.IntervalCategoryDataset;
 import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
@@ -46,7 +41,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 		super(new GridLayout(0, 1));
 		this.project = project;
 		
-		dataset = createDataset(project);
+			dataset = createDataset(project);
         JFreeChart chart = ChartFactory.createGanttChart(project.getName(), "Task/Bug", "Date", dataset, true, true, false);
         
         ganttSelectionRenderer = new GanttSelectionRenderer();
@@ -56,7 +51,6 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
         
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.addChartMouseListener(this);
-		chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
 		this.add(chartPanel);
 	}
 
@@ -64,8 +58,10 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 		TaskSeries scheduled = new TaskSeries("Scheduled");
 		
 		for (TaskBug taskBug : project.getTaskBugs()) {
-			scheduled.add(new Task(taskBug.getTitle(), 
-					      new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime())));
+			Task chartTask = new Task(taskBug.getTitle(), 
+					new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime()));
+			chartTask.setPercentComplete(taskBug.getPercentageCompleted() / 100.0);
+		    scheduled.add(chartTask);
 			
 			taskBugs.put(taskBug.getTitle(), taskBug);
 		}
@@ -83,7 +79,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 	private void fireTaskBugSelected(String uniqueId) {
 		if (taskBugs.containsKey(uniqueId)) {
 			TaskBug selectedTaskBug = taskBugs.get(uniqueId);
-			
+
 			for (TaskBugSelectionListener listener : taskBugListeners) {
 				listener.taskBugSelected(selectedTaskBug);
 			}
