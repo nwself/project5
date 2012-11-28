@@ -32,9 +32,8 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	
 	private Project project;
 	
-	private IntervalCategoryDataset dataset;
+	private TaskBugSeriesCollection dataset;
 	
-	private HashMap<String, TaskBug> taskBugs = new HashMap<>();
 	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<>();
 	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<>();
 
@@ -45,9 +44,6 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		super(new GridLayout(0, 1));
 		this.project = project;
 
-		dataset = createDataset(project);
-        JFreeChart chart = createChart(project.getName(), dataset);
-        
 		this.setProject(project);
 		
 		this.addKeyListener(this);
@@ -60,7 +56,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		ganttSelectionRenderer.setSelectedColumn(-1);
 		
 		// Rebuild dataset and chart
-		dataset = createDataset(project);
+		dataset = new TaskBugSeriesCollection(project);
 		JFreeChart chart = createChart(project.getName(), dataset);
 		
 		// Set up the new chart's panel
@@ -87,44 +83,25 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		return chart;
 	}
 
-	private IntervalCategoryDataset createDataset(Project project) {
-		TaskSeries taskSeries = new TaskSeries("Tasks");
-		TaskSeries bugSeries = new TaskSeries("Bugs");
-		
-		for (TaskBug taskBug : project.getTaskBugs()) {
-			Task chartTask = new Task(taskBug.getTitle(), 
-					new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime()));
-			chartTask.setPercentComplete(taskBug.getPercentageCompleted() / 100.0);
-		    
-			// Add to appropriate task series
-			if (taskBug.isTask()) {
-		    	taskSeries.add(chartTask);
-		    } else {
-		    	bugSeries.add(chartTask);
-		    }
-			
-			taskBugs.put(taskBug.getTitle(), taskBug);
-		}
-		
-        TaskSeriesCollection collection = new TaskSeriesCollection();
-        collection.add(taskSeries);
-        collection.add(bugSeries);
-
-        return collection;
-	}
-
 	public void addTaskBugSelectionListener(TaskBugSelectionListener listener) {
 		taskBugListeners.add(listener);
 	}
 
 	private void fireTaskBugSelected(String uniqueId) {
-		if (taskBugs.containsKey(uniqueId)) {
-			TaskBug selectedTaskBug = taskBugs.get(uniqueId);
-
+		TaskBug selectedTaskBug = dataset.getTaskBugByTitle(uniqueId);
+		if (selectedTaskBug != null) {
 			for (TaskBugSelectionListener listener : taskBugListeners) {
 				listener.taskBugSelected(selectedTaskBug);
 			}
 		}
+		
+//		if (taskBugs.containsKey(uniqueId)) {
+//			TaskBug selectedTaskBug = taskBugs.get(uniqueId);
+//
+//			for (TaskBugSelectionListener listener : taskBugListeners) {
+//				listener.taskBugSelected(selectedTaskBug);
+//			}
+//		}
 	}
 
 	public void addProjectSelectionListener(ProjectSelectionListener listener) {
@@ -178,8 +155,9 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		if (selectedColumn != -1) {
 			String uniqueId = (String) dataset.getColumnKey(selectedColumn);
 			
-			if (taskBugs.containsKey(uniqueId)) {
-				project.removeTaskBug(taskBugs.get(uniqueId));
+			TaskBug selectedTaskBug = dataset.getTaskBugByTitle(uniqueId);
+			if (selectedTaskBug != null) {
+				project.removeTaskBug(selectedTaskBug);
 				setProject(project);
 			}
 		}
