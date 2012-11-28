@@ -1,5 +1,6 @@
 package edu.cs5774.project5;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.util.Calendar;
@@ -19,6 +20,8 @@ import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.CategoryLabelEntity;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.TitleEntity;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.IntervalCategoryDataset;
 import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
@@ -31,16 +34,25 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 	
 	private Project project;
 	
+	private IntervalCategoryDataset dataset;
+	
 	private HashMap<String, TaskBug> taskBugs = new HashMap<>();
 	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<>();
 	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<>();
+
+	private GanttSelectionRenderer ganttSelectionRenderer;
 
 	public GanttChartPane(Project project) {
 		super(new GridLayout(0, 1));
 		this.project = project;
 		
-		IntervalCategoryDataset dataset = createDataset(project);
+		dataset = createDataset(project);
         JFreeChart chart = ChartFactory.createGanttChart(project.getName(), "Task/Bug", "Date", dataset, true, true, false);
+        
+        ganttSelectionRenderer = new GanttSelectionRenderer();
+        
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        plot.setRenderer(ganttSelectionRenderer);
         
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.addChartMouseListener(this);
@@ -70,8 +82,10 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 
 	private void fireTaskBugSelected(String uniqueId) {
 		if (taskBugs.containsKey(uniqueId)) {
+			TaskBug selectedTaskBug = taskBugs.get(uniqueId);
+			
 			for (TaskBugSelectionListener listener : taskBugListeners) {
-				listener.taskBugSelected(taskBugs.get(uniqueId));
+				listener.taskBugSelected(selectedTaskBug);
 			}
 		}
 	}
@@ -92,13 +106,18 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 		if (chartEntity instanceof CategoryItemEntity) {
 			CategoryItemEntity entity = (CategoryItemEntity) chartEntity;
 			fireTaskBugSelected((String) entity.getColumnKey());
+			ganttSelectionRenderer.setSelectedColumn(dataset.getColumnIndex(entity.getColumnKey()));
 		} else if (chartEntity instanceof CategoryLabelEntity) {
 			CategoryLabelEntity entity = (CategoryLabelEntity) chartEntity;
 			fireTaskBugSelected((String) entity.getKey());
+			ganttSelectionRenderer.setSelectedColumn(dataset.getColumnIndex(entity.getKey()));
 		} else if (chartEntity instanceof TitleEntity) {
 			// Selecting the title always selects the project, no need to inspect the entity since
 			// there is only one project per chart.
 			fireProjectSelected(project);
+			ganttSelectionRenderer.setSelectedColumn(-1);
+		} else {
+			ganttSelectionRenderer.setSelectedColumn(-1);
 		}
 	}
 

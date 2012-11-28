@@ -49,13 +49,16 @@ public class JVizinator extends JFrame {
 		
 		Calendar dueDate = Calendar.getInstance();
 		dueDate.set(Calendar.DAY_OF_YEAR, dueDate.get(Calendar.DAY_OF_YEAR) + 5);
+
+		Calendar secondDue = Calendar.getInstance();
+		secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
 		
 		project.addTaskBug(new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
 				dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
 				Calendar.getInstance(), true));
 		
 		project.addTaskBug(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
-				dueDate, Calendar.getInstance(), 50.0, Calendar.getInstance(),
+				secondDue, Calendar.getInstance(), 50.0, dueDate,
 				Calendar.getInstance(), true));
 		
 		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
