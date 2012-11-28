@@ -8,7 +8,7 @@ import org.jfree.chart.renderer.category.GanttRenderer;
 public class GanttSelectionRenderer extends GanttRenderer {
 	
 	private int selectedColumn = -1;
-	private static final Paint SELECTED_PAINT = Color.blue;
+	private static final Paint SELECTED_PAINT = Color.yellow;
 	
 	public GanttSelectionRenderer() {
 	}

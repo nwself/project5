@@ -87,19 +87,27 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	}
 
 	private IntervalCategoryDataset createDataset(Project project) {
-		TaskSeries scheduled = new TaskSeries("Scheduled");
+		TaskSeries taskSeries = new TaskSeries("Tasks");
+		TaskSeries bugSeries = new TaskSeries("Bugs");
 		
 		for (TaskBug taskBug : project.getTaskBugs()) {
 			Task chartTask = new Task(taskBug.getTitle(), 
 					new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime()));
 			chartTask.setPercentComplete(taskBug.getPercentageCompleted() / 100.0);
-		    scheduled.add(chartTask);
+		    
+			// Add to appropriate task series
+			if (taskBug.isTask()) {
+		    	taskSeries.add(chartTask);
+		    } else {
+		    	bugSeries.add(chartTask);
+		    }
 			
 			taskBugs.put(taskBug.getTitle(), taskBug);
 		}
 		
         TaskSeriesCollection collection = new TaskSeriesCollection();
-        collection.add(scheduled);
+        collection.add(taskSeries);
+        collection.add(bugSeries);
 
         return collection;
 	}

@@ -62,6 +62,10 @@ public class JVizinator extends JFrame {
 				secondDue, Calendar.getInstance(), 50.0, dueDate,
 				Calendar.getInstance(), true));
 		
+		project.addTaskBug(new TaskBug("Bug 1", TaskBug.Status.OPEN, TaskBug.Priority.MEDIUM,
+				secondDue, Calendar.getInstance(), 33.3, dueDate,
+				Calendar.getInstance(), false));
+		
 		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
 		
 		DocumentPane docPane = new DocumentPane(project);
