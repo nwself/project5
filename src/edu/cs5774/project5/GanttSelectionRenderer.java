@@ -7,7 +7,8 @@ import org.jfree.chart.renderer.category.GanttRenderer;
 
 public class GanttSelectionRenderer extends GanttRenderer {
 	
-	int selectedColumn = -1;
+	private int selectedColumn = -1;
+	private static final Paint SELECTED_PAINT = Color.blue;
 	
 	public GanttSelectionRenderer() {
 	}
@@ -15,7 +16,7 @@ public class GanttSelectionRenderer extends GanttRenderer {
 	@Override
 	public Paint getItemPaint(int row, int column) {
 		if (column == selectedColumn) {
-			return Color.blue;
+			return SELECTED_PAINT;
 		} else {
 			return super.getItemPaint(row, column);
 		}
@@ -23,5 +24,9 @@ public class GanttSelectionRenderer extends GanttRenderer {
 
 	public void setSelectedColumn(int columnIndex) {
 		selectedColumn = columnIndex;
+	}
+
+	public int getSelectedColumn() {
+		return selectedColumn;
 	}
 }

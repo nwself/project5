@@ -2,6 +2,8 @@ package edu.cs5774.project5;
 
 import java.awt.Cursor;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -23,7 +25,7 @@ import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 
-public class GanttChartPane extends JPanel implements ChartMouseListener {
+public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener {
 
 	private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 	
@@ -35,23 +37,30 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<>();
 	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<>();
 
-	private GanttSelectionRenderer ganttSelectionRenderer;
-
+	private GanttSelectionRenderer ganttSelectionRenderer = new GanttSelectionRenderer();
+	private ChartPanel chartPanel;
+	
 	public GanttChartPane(Project project) {
 		super(new GridLayout(0, 1));
 		this.project = project;
-		
-			dataset = createDataset(project);
-        JFreeChart chart = ChartFactory.createGanttChart(project.getName(), "Task/Bug", "Date", dataset, true, true, false);
-        
-        ganttSelectionRenderer = new GanttSelectionRenderer();
-        
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        plot.setRenderer(ganttSelectionRenderer);
-        
-		ChartPanel chartPanel = new ChartPanel(chart);
+
+		dataset = createDataset(project);
+        JFreeChart chart = createChart(project.getName(), dataset);
+                
+		chartPanel = new ChartPanel(chart);
 		chartPanel.addChartMouseListener(this);
 		this.add(chartPanel);
+		
+		this.addKeyListener(this);
+	}
+	
+	private JFreeChart createChart(String chartTitle, IntervalCategoryDataset dataset) {
+		JFreeChart chart = ChartFactory.createGanttChart(project.getName(), "Task/Bug", "Date", dataset, true, true, false);
+		
+		CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        plot.setRenderer(ganttSelectionRenderer);
+
+		return chart;
 	}
 
 	private IntervalCategoryDataset createDataset(Project project) {
@@ -98,6 +107,9 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 	
 	@Override
 	public void chartMouseClicked(ChartMouseEvent chartEvent) {
+        // Ask for keyboard input.		
+        this.requestFocusInWindow();
+		
 		ChartEntity chartEntity = chartEvent.getEntity();
 		if (chartEntity instanceof CategoryItemEntity) {
 			CategoryItemEntity entity = (CategoryItemEntity) chartEntity;
@@ -129,4 +141,43 @@ public class GanttChartPane extends JPanel implements ChartMouseListener {
 		}
 	}
 
+	public void deleteSelectedElement() {
+		int selectedColumn = ganttSelectionRenderer.getSelectedColumn();
+		if (selectedColumn != -1) {
+			String uniqueId = (String) dataset.getColumnKey(selectedColumn);
+			
+			if (taskBugs.containsKey(uniqueId)) {
+				project.removeTaskBug(taskBugs.get(uniqueId));
+				
+				// Clear selection
+				ganttSelectionRenderer.setSelectedColumn(-1);
+				
+				// Rebuild dataset and chart
+				dataset = createDataset(project);
+				JFreeChart chart = createChart(project.getName(), dataset);
+				
+				// Show the new chart
+				chartPanel.setChart(chart);
+			}
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// Do nothing
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_DELETE ||
+				e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+			deleteSelectedElement();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// Do nothing
+	}
 }
+ 

@@ -53,9 +53,10 @@ public class JVizinator extends JFrame {
 		Calendar secondDue = Calendar.getInstance();
 		secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
 		
-		project.addTaskBug(new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
+		TaskBug tb1 = new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
 				dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
-				Calendar.getInstance(), true));
+				Calendar.getInstance(), true);
+		project.addTaskBug(tb1);
 		
 		project.addTaskBug(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
 				secondDue, Calendar.getInstance(), 50.0, dueDate,

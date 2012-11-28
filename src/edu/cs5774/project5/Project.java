@@ -28,6 +28,10 @@ public class Project {
 	public void addTaskBug(TaskBug taskBug) {
 		taskBugs.add(taskBug);
 	}
+
+	public void removeTaskBug(TaskBug taskBug) {
+		taskBugs.remove(taskBug);
+	}
 	
 	public String getName() {
 		return name;

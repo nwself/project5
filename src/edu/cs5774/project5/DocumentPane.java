@@ -30,5 +30,4 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 	public void projectSelected(Project project) {
 		this.setRightComponent(projectDetailsPane);
 	}
-
 }
