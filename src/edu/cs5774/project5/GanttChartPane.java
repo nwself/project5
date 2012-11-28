@@ -45,18 +45,18 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		this.project = project;
 
 		this.setProject(project);
-		
 		this.addKeyListener(this);
 	}
 
 	public void setProject(Project project) {
 		this.project = project;
 		
-		// Clear selection
-		ganttSelectionRenderer.setSelectedColumn(-1);
+		// Rebuild dataset
+		dataset = new TaskBugSeriesCollection(project, ganttSelectionRenderer);
+		this.addTaskBugSelectionListener(dataset);
+		this.addProjectSelectionListener(dataset);
 		
-		// Rebuild dataset and chart
-		dataset = new TaskBugSeriesCollection(project);
+		// Rebuild chart
 		JFreeChart chart = createChart(project.getName(), dataset);
 		
 		// Set up the new chart's panel
@@ -87,21 +87,10 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		taskBugListeners.add(listener);
 	}
 
-	private void fireTaskBugSelected(String uniqueId) {
-		TaskBug selectedTaskBug = dataset.getTaskBugByTitle(uniqueId);
-		if (selectedTaskBug != null) {
-			for (TaskBugSelectionListener listener : taskBugListeners) {
-				listener.taskBugSelected(selectedTaskBug);
-			}
+	private void fireTaskBugSelected(TaskBug selectedTaskBug) {
+		for (TaskBugSelectionListener listener : taskBugListeners) {
+			listener.taskBugSelected(selectedTaskBug);
 		}
-		
-//		if (taskBugs.containsKey(uniqueId)) {
-//			TaskBug selectedTaskBug = taskBugs.get(uniqueId);
-//
-//			for (TaskBugSelectionListener listener : taskBugListeners) {
-//				listener.taskBugSelected(selectedTaskBug);
-//			}
-//		}
 	}
 
 	public void addProjectSelectionListener(ProjectSelectionListener listener) {
@@ -116,31 +105,36 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	
 	@Override
 	public void chartMouseClicked(ChartMouseEvent chartEvent) {
-        // Ask for keyboard input
+        // Ask for keyboard input so that we get delete key presses
         this.requestFocusInWindow();
 		
+        // Get the title string out of the entity and get TaskBug from TaskBugSeriesCollection
 		ChartEntity chartEntity = chartEvent.getEntity();
 		if (chartEntity instanceof CategoryItemEntity) {
 			CategoryItemEntity entity = (CategoryItemEntity) chartEntity;
-			fireTaskBugSelected((String) entity.getColumnKey());
-			ganttSelectionRenderer.setSelectedColumn(dataset.getColumnIndex(entity.getColumnKey()));
+			String entityTitle = (String) entity.getColumnKey();
+			
+			fireTaskBugSelected(dataset.getTaskBugByTitle(entityTitle));
 		} else if (chartEntity instanceof CategoryLabelEntity) {
 			CategoryLabelEntity entity = (CategoryLabelEntity) chartEntity;
-			fireTaskBugSelected((String) entity.getKey());
-			ganttSelectionRenderer.setSelectedColumn(dataset.getColumnIndex(entity.getKey()));
+			String entityTitle = (String) entity.getKey();
+			
+			fireTaskBugSelected(dataset.getTaskBugByTitle(entityTitle));
 		} else if (chartEntity instanceof TitleEntity) {
 			// Selecting the title always selects the project, no need to inspect the entity since
 			// there is only one project per chart.
 			fireProjectSelected(project);
-			ganttSelectionRenderer.setSelectedColumn(-1);
 		} else {
-			ganttSelectionRenderer.setSelectedColumn(-1);
+			// Send null to clear out selection
+			fireTaskBugSelected(null);
 		}
 	}
 
 	@Override
 	public void chartMouseMoved(ChartMouseEvent chartEvent) {
 		ChartEntity chartEntity = chartEvent.getEntity();
+		
+		// Change to hand cursor over every selectable item
 		if ((chartEntity instanceof CategoryItemEntity) || 
 				(chartEntity instanceof CategoryLabelEntity) ||
 				(chartEntity instanceof TitleEntity)) {
@@ -151,15 +145,10 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	}
 	
 	public void deleteSelectedElement() {
-		int selectedColumn = ganttSelectionRenderer.getSelectedColumn();
-		if (selectedColumn != -1) {
-			String uniqueId = (String) dataset.getColumnKey(selectedColumn);
-			
-			TaskBug selectedTaskBug = dataset.getTaskBugByTitle(uniqueId);
-			if (selectedTaskBug != null) {
-				project.removeTaskBug(selectedTaskBug);
-				setProject(project);
-			}
+		TaskBug selectedTaskBug = dataset.getSelectedTaskBug();
+		if (selectedTaskBug != null) {
+			project.removeTaskBug(selectedTaskBug);
+			setProject(project);
 		}
 	}
 
