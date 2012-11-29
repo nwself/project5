@@ -88,6 +88,17 @@ public class JVizinator extends JFrame {
 			}
 		});
 		fileMenu.add(rssItem);
+        JMenuItem openItem = new JMenuItem("Open");
+        JMenuItem saveItem = new JMenuItem("Save");
+        fileMenu.add(openItem);
+        fileMenu.add(saveItem);
+        
+        JMenu editMenu = new JMenu("Edit");
+		editMenu.setMnemonic(KeyEvent.VK_E);
+        JMenuItem undoItem = new JMenuItem("Undo");
+        JMenuItem redoItem = new JMenuItem("Redo");
+        editMenu.add(undoItem);
+        editMenu.add(redoItem);
 		
 		JMenu elementMenu = new JMenu("Element");
 		elementMenu.setMnemonic(KeyEvent.VK_E);
@@ -103,6 +114,7 @@ public class JVizinator extends JFrame {
 		elementMenu.add(deleteItem);
 		
 		menuBar.add(fileMenu);
+        menuBar.add(editMenu);
 		menuBar.add(elementMenu);
 		
 		return menuBar;
