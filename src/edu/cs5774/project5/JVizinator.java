@@ -78,7 +78,6 @@ public class JVizinator extends JFrame {
 		// TODO: Noha fill out the rest of the menu items
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-		menuBar.add(fileMenu);
 		
 		JMenuItem rssItem = new JMenuItem("Update from RSS", KeyEvent.VK_U);
 		rssItem.addActionListener(new ActionListener() {
@@ -90,11 +89,33 @@ public class JVizinator extends JFrame {
 		});
 		fileMenu.add(rssItem);
 		
+		JMenu elementMenu = new JMenu("Element");
+		elementMenu.setMnemonic(KeyEvent.VK_E);
+		
+		JMenuItem deleteItem = new JMenuItem("Delete", KeyEvent.VK_D);
+		deleteItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteSelectedItem();
+			}
+		});
+		elementMenu.add(deleteItem);
+		
 		menuBar.add(fileMenu);
+		menuBar.add(elementMenu);
 		
 		return menuBar;
 	}
 	
+	protected void deleteSelectedItem() {
+		DocumentPane docPane = null;
+		
+		// TODO Manpreet figure out how to find the currently visible tab
+		// docPane = currently visible tab
+		docPane.deletionRequested();
+	}
+
 	protected static void createAndShowGUI() {
 		new JVizinator();
 	}

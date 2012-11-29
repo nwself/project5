@@ -36,10 +36,11 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	
 	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<>();
 	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<>();
-
+	private LinkedList<DeletionRequestedListener> deletionListeners =  new LinkedList<>();
+	
 	private GanttSelectionRenderer ganttSelectionRenderer = new GanttSelectionRenderer();
 	private ChartPanel chartPanel;
-	
+
 	public GanttChartPane(Project project) {
 		super(new GridLayout(0, 1));
 		this.project = project;
@@ -84,7 +85,9 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	}
 
 	public void addTaskBugSelectionListener(TaskBugSelectionListener listener) {
-		taskBugListeners.add(listener);
+		if (listener != null) {
+			taskBugListeners.add(listener);
+		}
 	}
 
 	private void fireTaskBugSelected(TaskBug selectedTaskBug) {
@@ -94,12 +97,20 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	}
 
 	public void addProjectSelectionListener(ProjectSelectionListener listener) {
-		projectListeners.add(listener);
+		if (listener != null) {
+			projectListeners.add(listener);
+		}
 	}
 
 	private void fireProjectSelected(Project project) {
 		for (ProjectSelectionListener listener : projectListeners ) {
 			listener.projectSelected(project);
+		}
+	}
+	
+	public void addDeletionRequestedListener(DeletionRequestedListener listener) {
+		if (listener != null) {
+			deletionListeners.add(listener);
 		}
 	}
 	
@@ -147,8 +158,13 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	public void deleteSelectedElement() {
 		TaskBug selectedTaskBug = dataset.getSelectedTaskBug();
 		if (selectedTaskBug != null) {
-			project.removeTaskBug(selectedTaskBug);
-			setProject(project);
+			fireDeletionRequested();
+		}
+	}
+
+	private void fireDeletionRequested() {
+		for (DeletionRequestedListener listener : deletionListeners) {
+			listener.deletionRequested();
 		}
 	}
 
@@ -168,6 +184,10 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// Do nothing
+	}
+
+	public TaskBug getSelectedTaskBug() {
+		return dataset.getSelectedTaskBug();
 	}
 }
  
