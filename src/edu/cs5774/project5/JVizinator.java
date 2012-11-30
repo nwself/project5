@@ -1,5 +1,6 @@
 package edu.cs5774.project5;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -16,10 +17,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
-public class JVizinator extends JFrame {
+public class JVizinator extends JFrame implements ActionEnabledListener {
 	
 	private JTabbedPane tabbedPane;
+	
+	private JMenuItem undoItem;
+	private JMenuItem redoItem;
+	private JMenuItem deleteItem;
 	
 	public JVizinator() {
 		super("JVizinator");
@@ -69,13 +75,13 @@ public class JVizinator extends JFrame {
 		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
 		
 		DocumentPane docPane = new DocumentPane(project);
+		docPane.addUndoRedoEnabledListener(this);
 		tabbedPane.addTab(project.getName(), docPane);
 	}
 	
 	private JMenuBar createJMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		
-		// TODO: Noha fill out the rest of the menu items
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		
@@ -95,15 +101,39 @@ public class JVizinator extends JFrame {
         
         JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
-        JMenuItem undoItem = new JMenuItem("Undo");
-        JMenuItem redoItem = new JMenuItem("Redo");
+        
+		undoItem = new JMenuItem("Undo");
+        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+		undoItem.setMnemonic(KeyEvent.VK_U);
+		undoItem.setEnabled(false);
+		undoItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				undoDeletion();
+			}
+		});
+        
+        redoItem = new JMenuItem("Redo");
+        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        redoItem.setMnemonic(KeyEvent.VK_R);
+        redoItem.setEnabled(false);
+        redoItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				redoDeletion();
+			}
+		});
+        
         editMenu.add(undoItem);
         editMenu.add(redoItem);
 		
 		JMenu elementMenu = new JMenu("Element");
-		elementMenu.setMnemonic(KeyEvent.VK_E);
+		elementMenu.setMnemonic(KeyEvent.VK_L);
 		
-		JMenuItem deleteItem = new JMenuItem("Delete", KeyEvent.VK_D);
+		deleteItem = new JMenuItem("Delete Element", KeyEvent.VK_D);
+		deleteItem.setEnabled(false);
 		deleteItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -120,12 +150,28 @@ public class JVizinator extends JFrame {
 		return menuBar;
 	}
 	
+	protected void redoDeletion() {
+		Component selectedComponent = tabbedPane.getSelectedComponent();
+		if (selectedComponent instanceof DocumentPane) {
+			DocumentPane docPane = (DocumentPane) selectedComponent;
+			docPane.redoDeletion();
+		}
+	}
+
+	protected void undoDeletion() {
+		Component selectedComponent = tabbedPane.getSelectedComponent();
+		if (selectedComponent instanceof DocumentPane) {
+			DocumentPane docPane = (DocumentPane) selectedComponent;
+			docPane.undoDeletion();
+		}
+	}
+
 	protected void deleteSelectedItem() {
-		DocumentPane docPane = null;
-		
-		// TODO Manpreet figure out how to find the currently visible tab
-		// docPane = currently visible tab
-		docPane.deletionRequested();
+		Component selectedComponent = tabbedPane.getSelectedComponent();
+		if (selectedComponent instanceof DocumentPane) {
+			DocumentPane docPane = (DocumentPane) selectedComponent;
+			docPane.deletionRequested();
+		}
 	}
 
 	protected static void createAndShowGUI() {
@@ -138,5 +184,16 @@ public class JVizinator extends JFrame {
                 createAndShowGUI();
             }
         });
+	}
+
+	@Override
+	public void undoRedoEnabled(boolean undoEnabled, boolean redoEnabled) {
+		undoItem.setEnabled(undoEnabled);
+		redoItem.setEnabled(redoEnabled);
+	}
+
+	@Override
+	public void deleteEnabled(boolean deleteEnabled) {
+		deleteItem.setEnabled(deleteEnabled);
 	}
 }

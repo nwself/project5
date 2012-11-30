@@ -21,6 +21,16 @@ public class Project {
 		this.updatedAt = updatedAt;
 	}
 	
+	public Project(Project other) {
+		this.name = other.name;
+		this.description = other.description;
+		this.createdAt = other.createdAt;
+		this.updatedAt = other.updatedAt;
+		
+		this.users.addAll(other.users);
+		this.taskBugs.addAll(other.taskBugs);
+	}
+
 	public void addUser(User user) {
 		users.add(user);
 	}
