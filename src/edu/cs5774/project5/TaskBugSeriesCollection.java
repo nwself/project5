@@ -22,7 +22,7 @@ public class TaskBugSeriesCollection extends TaskSeriesCollection implements Tas
 		TaskSeries taskSeries = new TaskSeries("Tasks");
 		TaskSeries bugSeries = new TaskSeries("Bugs");
 		
-		for (TaskBug taskBug : project.getTaskBugs()) {
+		for (TaskBug taskBug : project.getTask()) {
 			Task chartTask = new Task(taskBug.getTitle(), 
 					new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime()));
 			chartTask.setPercentComplete(taskBug.getPercentageCompleted() / 100.0);
