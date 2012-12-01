@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class TaskBug {
 	
@@ -76,7 +77,8 @@ public class TaskBug {
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
-	@XmlElement(name="due_date",type=Calendar.class)
+	@XmlElement(name="due_date")
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Calendar getDueDate() {
 		return dueDate;
 	}
@@ -84,7 +86,8 @@ public class TaskBug {
 		this.dueDate = dueDate;
 	}
 	
-	@XmlElement(name="estimated_date",type=Calendar.class)
+	@XmlElement(name="estimated_date")
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Calendar getEstimatedDate() {
 		return estimatedDate;
 	}
@@ -100,7 +103,8 @@ public class TaskBug {
 		this.percentageCompleted = percentageCompleted;
 	}
 	
-	@XmlElement(name="created_at",type=Calendar.class)
+	@XmlElement(name="created_at")
+	@XmlJavaTypeAdapter(CalendarAdapter.class)
 	public Calendar getCreatedAt() {
 		return createdAt;
 	}
@@ -108,7 +112,8 @@ public class TaskBug {
 		this.createdAt = createdAt;
 	}
 	
-	@XmlElement(name="pubDate",type=Calendar.class)
+	@XmlElement(name="pubDate")
+	@XmlJavaTypeAdapter(CalendarAdapter.class)
 	public Calendar getUpdatedAt() {
 		return updatedAt;
 	}

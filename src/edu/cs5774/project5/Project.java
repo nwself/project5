@@ -6,14 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class Project {
 	private String name;
 	
 	private String description;
-	
+
 	private Calendar createdAt;
-	
 
 	private Calendar updatedAt;
 	
@@ -83,14 +83,19 @@ public class Project {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	@XmlElement(name="created_at",type=Calendar.class)
+
+	@XmlElement(name="created_at")
+	@XmlJavaTypeAdapter(CalendarAdapter.class)
 	public Calendar getCreatedAt() {
 		return createdAt;
 	}
+
 	public void setCreatedAt(Calendar createdAt) {
 		this.createdAt = createdAt;
 	}
-	@XmlElement(name="pubDate",type=Date.class)
+	
+	@XmlElement(name="pubDate")
+	@XmlJavaTypeAdapter(CalendarAdapter.class)
 	public Calendar getUpdatedAt() {
 		return updatedAt;
 	}
