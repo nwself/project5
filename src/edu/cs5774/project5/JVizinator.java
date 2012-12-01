@@ -112,15 +112,21 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         }
 	}
 	
-	private void updateFromRSS() throws ClientProtocolException, IOException {
+	private void updateFromRSS() {
 		HttpResponse response = fetchFeed();
 		
 		if (response != null) {
 			try {
 				openFilesFromStream(response.getEntity().getContent());
-			} catch (Exception e) {
+			} catch (IllegalStateException e) {
 				e.printStackTrace();
-				showErrorMessage("Parsing of RSS feed failed");
+				showErrorMessage("IllegalStateException thrown");
+			} catch (JAXBException e) {
+				e.printStackTrace();
+				showErrorMessage("Could not parse RSS feed");
+			} catch (IOException e) {
+				e.printStackTrace();
+				showErrorMessage("Problem reading from RSS feed");
 			}
 		} else {
 			showErrorMessage("RSS feed could not be fetched");
@@ -132,13 +138,13 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		int tabIndex = tabbedPane.indexOfTab(tabTitle); 
 		
 		if (tabIndex == -1) {
-		DocumentPane docPane = new DocumentPane(project);
-		docPane.addUndoRedoEnabledListener(this);
-		
-		tabbedPane.addTab(tabTitle, docPane);
-		
-		int newTabIndex = tabbedPane.indexOfTab(tabTitle);
-        tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
+			DocumentPane docPane = new DocumentPane(project);
+			docPane.addUndoRedoEnabledListener(this);
+			
+			tabbedPane.addTab(tabTitle, docPane);
+			
+			int newTabIndex = tabbedPane.indexOfTab(tabTitle);
+		    tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
 		} else {
 			tabbedPane.setSelectedIndex(tabIndex);
 		}
@@ -147,27 +153,24 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	private JMenuBar createJMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		
+		/* FILE MENU */
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		
+		// Update from RSS
 		JMenuItem rssItem = new JMenuItem("Update from RSS", KeyEvent.VK_U);
 		rssItem.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
 				updateFromRSS();
-				} catch (ClientProtocolException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 			}
 		});
 		fileMenu.add(rssItem);
-        JMenuItem openItem = new JMenuItem("Open");
+		
+		// Open file
+        JMenuItem openItem = new JMenuItem("Open", KeyEvent.VK_O);
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         openItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -175,7 +178,11 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				openFile();
 			}
 		});
-        JMenuItem saveItem = new JMenuItem("Save");
+        fileMenu.add(openItem);
+        
+        // Save file
+        JMenuItem saveItem = new JMenuItem("Save", KeyEvent.VK_S);
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         saveItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -183,8 +190,11 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				saveFile();
 			}
 		});
+        fileMenu.add(saveItem);
         
-        JMenuItem closeItem = new JMenuItem("Close current");
+        // Close current tab
+        JMenuItem closeItem = new JMenuItem("Close current tab", KeyEvent.VK_C);
+        closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
         closeItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -192,7 +202,11 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				closeFile();
 			}
 		});
-        JMenuItem exitItem = new JMenuItem("Exit");
+        fileMenu.add(closeItem);
+
+        // Exit program
+        JMenuItem exitItem = new JMenuItem("Exit", KeyEvent.VK_E);
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
         exitItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -200,17 +214,16 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				System.exit(0);
 			}
 		});
-        fileMenu.add(openItem);
-        fileMenu.add(saveItem);
-        fileMenu.add(closeItem);
         fileMenu.add(exitItem);
+		menuBar.add(fileMenu);
         
+        /* EDIT MENU */
         JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
-        
-		undoItem = new JMenuItem("Undo");
+
+		// Undo
+		undoItem = new JMenuItem("Undo", KeyEvent.VK_U);
         undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
-		undoItem.setMnemonic(KeyEvent.VK_U);
 		undoItem.setEnabled(false);
 		undoItem.addActionListener(new ActionListener() {
 			
@@ -219,10 +232,11 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				undoDeletion();
 			}
 		});
+        editMenu.add(undoItem);
         
-        redoItem = new JMenuItem("Redo");
+		// Redo
+        redoItem = new JMenuItem("Redo", KeyEvent.VK_R);
         redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
-        redoItem.setMnemonic(KeyEvent.VK_R);
         redoItem.setEnabled(false);
         redoItem.addActionListener(new ActionListener() {
 			
@@ -231,13 +245,14 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				redoDeletion();
 			}
 		});
-        
-        editMenu.add(undoItem);
         editMenu.add(redoItem);
-		
+        menuBar.add(editMenu);
+
+        /* ELEMENT MENU */
 		JMenu elementMenu = new JMenu("Element");
 		elementMenu.setMnemonic(KeyEvent.VK_L);
 		
+		// Delete element
 		deleteItem = new JMenuItem("Delete Element", KeyEvent.VK_D);
 		deleteItem.setEnabled(false);
 		deleteItem.addActionListener(new ActionListener() {
@@ -248,9 +263,6 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			}
 		});
 		elementMenu.add(deleteItem);
-		
-		menuBar.add(fileMenu);
-        menuBar.add(editMenu);
 		menuBar.add(elementMenu);
 		
 		return menuBar;
