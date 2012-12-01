@@ -21,19 +21,26 @@ public class DetailsPane extends JPanel {
 		taskBugPanel.setVisible(false);
 		this.add(taskBugPanel);
 		
-		projectPanel = new JPanel(new BorderLayout());
+		projectPanel = new JPanel(new FlowLayout());
 		fillInProjectPanel(project);
 		this.add(projectPanel);
 	}
 	
 	private void fillInProjectPanel(Project project) {
-		JLabel nameLabel = new JLabel("Details for " + project.getName());
-		JLabel descriptionLabel = new JLabel("Description: " + project.getDescription());
-		JLabel numofusersLabel = new JLabel("Number of Users: " + project.getUsers().size());
-		JLabel createdLabel = new JLabel("Date of Creation: " + project.getCreatedAt());
+		JLabel nameLabel = new JLabel();
+		nameLabel.setText("Details for " + project.getName());
+		Font f=nameLabel.getFont();
+		nameLabel.setFont(f.deriveFont(f.getStyle()^Font.BOLD));
 		projectPanel.add(nameLabel);
+		
+		JLabel descriptionLabel = new JLabel();
+		descriptionLabel.setText("Description: "+ project.getDescription());
 		projectPanel.add(descriptionLabel);
+		
+		JLabel numofusersLabel = new JLabel("Number of Users: " + project.getUsers().size());
 		projectPanel.add(numofusersLabel);
+		
+		JLabel createdLabel = new JLabel("Date of Creation: " + project.getCreatedAt().getTime());
 		projectPanel.add(createdLabel);
 		
 		
