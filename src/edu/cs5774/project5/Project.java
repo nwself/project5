@@ -24,10 +24,8 @@ public class Project {
 	private LinkedList<TaskBug> bug = new LinkedList<TaskBug>();
 	
 	
-	public Project()
-	{
-		
-	}
+	public Project() {}
+
 	public Project(String name, String description, Calendar createdAt,
 			Calendar updatedAt) {
 		super();

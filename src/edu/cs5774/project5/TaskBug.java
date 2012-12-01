@@ -10,13 +10,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class TaskBug {
 	
-	public TaskBug()
-	{
-		
-	}
+	public TaskBug() {}
 
 	@XmlType(name = "status")
 	@XmlEnum
+	@XmlJavaTypeAdapter(StatusAdapter.class)
 	public enum Status {
 		OPEN("Open"),
 		IN_PROGRESS("In Progress"),
@@ -28,12 +26,11 @@ public class TaskBug {
 			value = v;
 		}
 		
-	    public String value() {
+	    public String toString() {
 	        return value;
 	    }
 
 	    public static Status fromValue(String v) {
-	        //return valueOf(v);
 	    	for (Status c: Status.values()) {
 	    		if (c.value.equals(v)) {
 	    			return c;
@@ -44,9 +41,9 @@ public class TaskBug {
 	}
 	
 	enum Priority {
-		LOW,
-		MEDIUM,
-		HIGH
+		Low,
+		Medium,
+		High
 	}
 	
 	
