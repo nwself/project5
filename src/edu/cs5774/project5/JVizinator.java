@@ -1,9 +1,11 @@
 package edu.cs5774.project5;
 
+import java.awt.AWTKeyStroke;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,8 +17,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -59,8 +65,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         
         JPanel jviz = new JPanel(new GridLayout(0, 1));
         tabbedPane = new JTabbedPane();
+        setupTabTraversalKeys(tabbedPane);
         jviz.add(tabbedPane);
         this.setContentPane(jviz);
+        
+        // Start the program with the RSS feed loaded
+        updateFromRSS();
  
         //Display the window.
         this.pack();
@@ -151,7 +161,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			tabbedPane.setSelectedIndex(tabIndex);
 		}
 		
-		updateCloseTabEnabled();
+		updateMenuItemsEnabled();
     }
 	
 	private JMenuBar createJMenuBar() {
@@ -196,9 +206,10 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			}
 		});
         fileMenu.add(saveItem);
-        
+        fileMenu.addSeparator();
+         
         // Close current tab
-        closeItem = new JMenuItem("Close current tab", KeyEvent.VK_C);
+        closeItem = new JMenuItem("Close Tab", KeyEvent.VK_C);
         closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
         closeItem.setEnabled(false);
         closeItem.addActionListener(new ActionListener() {
@@ -209,7 +220,8 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			}
 		});
         fileMenu.add(closeItem);
-
+        fileMenu.addSeparator();
+        
         // Exit program
         JMenuItem exitItem = new JMenuItem("Exit", KeyEvent.VK_E);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
@@ -358,13 +370,14 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			buttonTab.closeTab();
 		}
 		
-		updateCloseTabEnabled();
+		updateMenuItemsEnabled();
 	}
 
-	private void updateCloseTabEnabled() {
-		boolean anyTabs = tabbedPane.getTabCount() != 0;
-		saveItem.setEnabled(anyTabs);
-		closeItem.setEnabled(anyTabs);
+	private void updateMenuItemsEnabled() {
+		int tabCount = tabbedPane.getTabCount();
+		
+		saveItem.setEnabled(tabCount != 0);
+		closeItem.setEnabled(tabCount != 0);
 	}
 
 	protected static void createAndShowGUI() {
@@ -388,5 +401,26 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	@Override
 	public void deleteEnabled(boolean deleteEnabled) {
 		deleteItem.setEnabled(deleteEnabled);
+	}
+	
+	private static void setupTabTraversalKeys(JTabbedPane tabbedPane)
+	{
+		KeyStroke ctrlTab = KeyStroke.getKeyStroke("ctrl TAB");
+		KeyStroke ctrlShiftTab = KeyStroke.getKeyStroke("ctrl shift TAB");
+		
+		// Remove ctrl-tab from normal focus traversal
+		Set<AWTKeyStroke> forwardKeys = new HashSet<AWTKeyStroke>(tabbedPane.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
+		forwardKeys.remove(ctrlTab);
+		tabbedPane.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
+		 
+		// Remove ctrl-shift-tab from normal focus traversal
+		Set<AWTKeyStroke> backwardKeys = new HashSet<AWTKeyStroke>(tabbedPane.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
+		backwardKeys.remove(ctrlShiftTab);
+		tabbedPane.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);
+		 
+		// Add keys to the tab's input map
+		InputMap inputMap = tabbedPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		inputMap.put(ctrlTab, "navigateNext");
+		inputMap.put(ctrlShiftTab, "navigatePrevious");
 	}
 }
