@@ -10,8 +10,7 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 	private Project project;
 
 	private GanttChartPane ganttPane;
-	private ProjectDetailsPane projectDetailsPane;
-	private TaskBugDetailsPane taskBugDetailsPane;
+	private DetailsPane detailsPane;
 
 	private Stack<Project> undoStack = new Stack<Project>();
 	private Stack<Project> redoStack = new Stack<Project>();
@@ -22,11 +21,10 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 		this.project = project;
 		
 		ganttPane = new GanttChartPane(project);
-		projectDetailsPane = new ProjectDetailsPane(project);
-		taskBugDetailsPane = new TaskBugDetailsPane();
+		detailsPane = new DetailsPane(project);
 		
 		this.setLeftComponent(ganttPane);
-		this.setRightComponent(projectDetailsPane);
+		this.setRightComponent(detailsPane);
 
 		ganttPane.addTaskBugSelectionListener(this);
 		ganttPane.addProjectSelectionListener(this);
@@ -36,15 +34,14 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 	@Override
 	public void taskBugSelected(TaskBug taskBug) {
 		if (taskBug != null) {
-			taskBugDetailsPane.updateDetails(taskBug);
-			this.setRightComponent(taskBugDetailsPane);
+			detailsPane.showTaskBug(taskBug);
 		}
 		fireDeleteEnabled(taskBug != null);
 	}
 
 	@Override
 	public void projectSelected(Project project) {
-		this.setRightComponent(projectDetailsPane);
+		detailsPane.showProject();
 		fireDeleteEnabled(false);
 	}
 
