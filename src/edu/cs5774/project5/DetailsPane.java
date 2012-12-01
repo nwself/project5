@@ -28,7 +28,12 @@ public class DetailsPane extends JPanel {
 	
 	private void fillInProjectPanel(Project project) {
 		JLabel nameLabel = new JLabel("Details for " + project.getName());
+		JLabel descriptionLabel = new JLabel("Details for " + project.getDescription());
+		JLabel createdLabel = new JLabel("Details for " + project.getCreatedAt());
 		projectPanel.add(nameLabel);
+		projectPanel.add(descriptionLabel);
+		projectPanel.add(createdLabel);
+		
 	}
 
 	private void fillInTaskBugPanel(TaskBug taskBug) {

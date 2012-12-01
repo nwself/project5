@@ -49,7 +49,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		// TODO: Krunal get RSS and parse it
 		// in the meantime, build a test Project and display it
 		
-		Project project = new Project("Test Project", 
+		int projCount = 5; //'projCount' will be the number of projects found by Krunal's parser, meanwhile 'projCount = 5'
+		
+		for(int i=0; i<projCount; i++) 
+		{
+			
+		Project project = new Project("Test Project" +(i+1), 
 				"A stub project while we wait for parsing to be implemented", 
 				Calendar.getInstance(),
 				Calendar.getInstance());
@@ -78,8 +83,15 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		DocumentPane docPane = new DocumentPane(project);
 		docPane.addUndoRedoEnabledListener(this);
 		tabbedPane.addTab(project.getName(), docPane);
+		
+		initTabComponent(i);
+
+		}
 	}
-	
+	private void initTabComponent(int j) {
+        tabbedPane.setTabComponentAt(j,
+                 new ButtonTabComponent(tabbedPane));
+    }
 	private JMenuBar createJMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		
