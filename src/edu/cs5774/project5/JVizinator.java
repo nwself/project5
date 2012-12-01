@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -129,12 +130,51 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 				secondDue, Calendar.getInstance(), 33.3, dueDate,
 				Calendar.getInstance(), false));
 		
-		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
+		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));*/
+		int projCount = 5; //'projCount' will be the number of projects found by Krunal's parser, meanwhile 'projCount = 5'
 		
-		DocumentPane docPane = new DocumentPane(project);
-		docPane.addUndoRedoEnabledListener(this);
-		tabbedPane.addTab(project.getName(), docPane);*/
+		for(int i=0; i<projCount; i++) 
+		{
+			Project project = new Project("Test Project" +(i+1), 
+					"A stub project while we wait for parsing to be implemented", 
+					Calendar.getInstance(),
+					Calendar.getInstance());
+			
+			Calendar dueDate = Calendar.getInstance();
+			dueDate.set(Calendar.DAY_OF_YEAR, dueDate.get(Calendar.DAY_OF_YEAR) + 5);
+	
+			Calendar secondDue = Calendar.getInstance();
+			secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
+			
+			TaskBug tb1 = new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
+					dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
+					Calendar.getInstance(), true);
+			project.addTask(tb1);
+			
+			project.addTask(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
+					secondDue, Calendar.getInstance(), 50.0, dueDate,
+					Calendar.getInstance(), true));
+			
+			project.addTask(new TaskBug("Bug 1", TaskBug.Status.OPEN, TaskBug.Priority.MEDIUM,
+					secondDue, Calendar.getInstance(), 33.3, dueDate,
+					Calendar.getInstance(), false));
+			
+			project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
+			
+			createNewTab(project);
+		}
 	}
+	
+	private void createNewTab(Project project) {
+	
+		
+		String tabTitle = project.getName();
+		DocumentPane docPane = new DocumentPane(project); 
+		tabbedPane.addTab(tabTitle, docPane);
+		
+		int newTabIndex = tabbedPane.indexOfTab(tabTitle);
+        tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
+    }
 	
 	private JMenuBar createJMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -160,9 +200,34 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		});
 		fileMenu.add(rssItem);
         JMenuItem openItem = new JMenuItem("Open");
+        openItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openFile();
+			}
+		});
         JMenuItem saveItem = new JMenuItem("Save");
+        JMenuItem closeItem = new JMenuItem("Close current");
+        closeItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				closeFile();
+			}
+		});
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
+        fileMenu.add(closeItem);
+        fileMenu.add(exitItem);
         
         JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
@@ -237,6 +302,22 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			DocumentPane docPane = (DocumentPane) selectedComponent;
 			docPane.deletionRequested();
 		}
+	}
+	protected void openFile() {
+		JFileChooser fd = new JFileChooser(".");
+		
+		int returnVal = fd.showOpenDialog(null);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		String fileName=fd.getSelectedFile().getName();
+		}
+		Project project1 = new Project("Test Project", "A stub project while we wait for parsing to be implemented", null, null);
+		DocumentPane docPane = new DocumentPane(project1);
+		docPane.addUndoRedoEnabledListener(this);
+		tabbedPane.addTab(project1.getName(), docPane);
+	}
+	
+	protected void closeFile() {
+		
 	}
 
 	protected static void createAndShowGUI() {
