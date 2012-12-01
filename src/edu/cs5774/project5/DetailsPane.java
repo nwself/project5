@@ -3,6 +3,7 @@ package edu.cs5774.project5;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
@@ -37,29 +38,40 @@ public class DetailsPane extends JPanel {
 		JLabel nameLabel = new JLabel();
 		nameLabel.setText("Details for " + project.getName());
 		Font f=nameLabel.getFont();
-		nameLabel.setFont(f.deriveFont(f.getStyle()^Font.BOLD));
+		nameLabel.setFont(f.deriveFont(f.getStyle()^Font.BOLD, 18.0f));
+		nameLabel.setHorizontalAlignment(JLabel.CENTER);
 		this.add(nameLabel);
 		
-		JLabel descriptionLabel = new JLabel();
+		
+		
+		JLabel descriptionLabel = new JLabel(project.getDescription());
 		Font newLabelFont=new Font(descriptionLabel.getFont().getName(),Font.BOLD,descriptionLabel.getFont().getSize());
-		JLabel word = new JLabel("Description: ");
+		JLabel word = new JLabel();
+		JPanel both=new JPanel();
+		word.setText("Description: ");
 		word.setFont(newLabelFont);
-		descriptionLabel.setText(project.getDescription());
-		this.add(word);
-		this.add(descriptionLabel);
+		both.add(word);
+		both.add(descriptionLabel);
+		this.add(both);
 		
 		JLabel numofusersLabel = new JLabel();
 		numofusersLabel.setText(Integer.toString(project.getUsers().size()));
-		word.setText("Number of Users: ");
-		word.setFont(newLabelFont);
-		this.add(word);
-		this.add(numofusersLabel);
+		JLabel word1 = new JLabel();
+		word1.setText("Number of Users: ");
+		word1.setFont(newLabelFont);
+		JPanel both1=new JPanel();
+		both1.add(word1);
+		both1.add(numofusersLabel);
+		this.add(both1);
 		
 		JLabel createdLabel = new JLabel(project.getCreatedAt().getTime().toString());	
-		word.setText("Date of Creation: ");
-		word.setFont(newLabelFont);
-		this.add(word);
-		this.add(createdLabel);
+		JLabel word3 = new JLabel();
+		word3.setText("Date of Creation: ");
+		word3.setFont(newLabelFont);
+		JPanel both2=new JPanel();
+		both2.add(word3);
+		both2.add(createdLabel);
+		this.add(both2);
 		
 		this.revalidate();
 	}
@@ -70,17 +82,18 @@ public class DetailsPane extends JPanel {
 		
 		JLabel titleLabel = new JLabel("Details for " + taskBug.getTitle());
 		Font f1=titleLabel.getFont();
-		titleLabel.setFont(f1.deriveFont(f1.getStyle()^Font.BOLD));
+		titleLabel.setFont(f1.deriveFont(f1.getStyle()^Font.BOLD, 18.0f));
+		titleLabel.setHorizontalAlignment(JLabel.CENTER);
 		this.add(titleLabel);
 		
-		JLabel statusLabel = new JLabel("COMPLETED");//taskBug.getStatus().toString());
+		JLabel statusLabel = new JLabel("Complete");//taskBug.getStatus().toString());
 		Font newLabelFont1=new Font(statusLabel.getFont().getName(),Font.BOLD,statusLabel.getFont().getSize());
 		JLabel word = new JLabel("The status is : ");
 		word.setFont(newLabelFont1);
 		this.add(word);
 		this.add(statusLabel);
 		
-		JLabel priorityLabel = new JLabel("HIGH");//taskBug.getPriority().toString());
+		JLabel priorityLabel = new JLabel("High");//taskBug.getPriority().toString());
 		word = new JLabel("The priority is : ");
 		word.setFont(newLabelFont1);
 		this.add(word);
