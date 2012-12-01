@@ -94,4 +94,8 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 			listener.deleteEnabled(deleteEnabled);
 		}
 	}
+
+	public Project getProject() {
+		return project;
+	}
 }

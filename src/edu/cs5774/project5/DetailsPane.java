@@ -73,20 +73,20 @@ public class DetailsPane extends JPanel {
 		titleLabel.setFont(f1.deriveFont(f1.getStyle()^Font.BOLD));
 		this.add(titleLabel);
 		
-		JLabel statusLabel = new JLabel(taskBug.getStatus().toString());
+		JLabel statusLabel = new JLabel("COMPLETED");//taskBug.getStatus().toString());
 		Font newLabelFont1=new Font(statusLabel.getFont().getName(),Font.BOLD,statusLabel.getFont().getSize());
 		JLabel word = new JLabel("The status is : ");
 		word.setFont(newLabelFont1);
 		this.add(word);
 		this.add(statusLabel);
 		
-		JLabel priorityLabel = new JLabel(taskBug.getPriority().toString());
+		JLabel priorityLabel = new JLabel("HIGH");//taskBug.getPriority().toString());
 		word = new JLabel("The priority is : ");
 		word.setFont(newLabelFont1);
 		this.add(word);
 		this.add(priorityLabel);
 		
-		JLabel dueDateLabel = new JLabel(taskBug.getDueDate().toString());
+		JLabel dueDateLabel = new JLabel(taskBug.getDueDate().getTime().toString());
 		word = new JLabel("The due date is : ");
 		word.setFont(newLabelFont1);
 		this.add(word);

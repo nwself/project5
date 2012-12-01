@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class TaskBug {
@@ -13,11 +15,33 @@ public class TaskBug {
 	{
 		
 	}
-	
-	enum Status {
-		OPEN,
-		IN_PROGRESS,
-		COMPLETE
+
+	@XmlType(name = "status")
+	@XmlEnum
+	public enum Status {
+		OPEN("Open"),
+		IN_PROGRESS("In Progress"),
+		COMPLETE("Complete");
+		
+		private final String value;
+		
+		Status(String v) {
+			value = v;
+		}
+		
+	    public String value() {
+	        return value;
+	    }
+
+	    public static Status fromValue(String v) {
+	        //return valueOf(v);
+	    	for (Status c: Status.values()) {
+	    		if (c.value.equals(v)) {
+	    			return c;
+	    		}
+	    	}
+	    	return OPEN;
+	    }
 	}
 	
 	enum Priority {
@@ -27,6 +51,13 @@ public class TaskBug {
 	}
 	
 	
+	public LinkedList<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(LinkedList<User> users) {
+		this.users = users;
+	}
 	private String title;
 	private Status status;
 	private Priority priority;
@@ -65,6 +96,7 @@ public class TaskBug {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
 	public Status getStatus() {
 		return status;
 	}

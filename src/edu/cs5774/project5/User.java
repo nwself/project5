@@ -7,6 +7,10 @@ public class User {
 	private String email;
 	private Calendar createdAt;
 	
+	public User() {
+		
+	}
+	
 	public User(String username, String email, Calendar createdAt) {
 		super();
 		this.username = username;

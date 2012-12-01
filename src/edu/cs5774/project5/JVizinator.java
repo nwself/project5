@@ -8,9 +8,11 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Calendar;
+import java.util.LinkedList;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,6 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.http.HttpRequest;
@@ -213,6 +216,14 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			}
 		});
         JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveFile();
+			}
+		});
+        
         JMenuItem closeItem = new JMenuItem("Close current");
         closeItem.addActionListener(new ActionListener() {
 			
@@ -285,6 +296,36 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		return menuBar;
 	}
 	
+	protected void saveFile() {
+		JAXBContext jaxbContext;
+		try {
+			jaxbContext = JAXBContext.newInstance(Rss.class);
+		
+			Rss rss = new Rss();
+			Channel channel = new Channel();
+			
+			LinkedList<Project> projectList = new LinkedList<Project>();
+			Component selectedComponent = tabbedPane.getSelectedComponent();
+			DocumentPane docPane = (DocumentPane) selectedComponent;
+			projectList.add(docPane.getProject());
+
+			channel.setItem(projectList);
+			
+			rss.setChannel(channel);
+			
+			File outputFile = new File("text.out");
+			
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			jaxbMarshaller.marshal(rss, outputFile);
+
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		Rss r = (Rss) jaxbUnmarshaller.marshal(new InputStreamReader(response.getEntity().getContent()));
+
+	}
+
 	protected void redoDeletion() {
 		Component selectedComponent = tabbedPane.getSelectedComponent();
 		if (selectedComponent instanceof DocumentPane) {
@@ -313,7 +354,24 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		int returnVal = fd.showOpenDialog(null);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
-		String fileName=fd.getSelectedFile().getName();
+			String fileName=fd.getSelectedFile().getName();
+			
+			JAXBContext jaxbContext;
+			try {
+				jaxbContext = JAXBContext.newInstance(Rss.class);
+			 
+				Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+				Rss r = (Rss) jaxbUnmarshaller.unmarshal(new File(fileName));
+				//Rss project = (Rss) jaxbUnmarshaller.unmarshal(new File("E:\\rss.xml"));
+				System.out.println(r.getChannel());
+				System.out.println("successful");
+				Project project = r.getChannel().getItem().get(0);
+
+				createNewTab(project);
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		Project project1 = new Project("Test Project", "A stub project while we wait for parsing to be implemented", null, null);
 		DocumentPane docPane = new DocumentPane(project1);
