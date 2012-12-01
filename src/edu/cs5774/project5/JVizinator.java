@@ -53,45 +53,47 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		for(int i=0; i<projCount; i++) 
 		{
+			Project project = new Project("Test Project" +(i+1), 
+					"A stub project while we wait for parsing to be implemented", 
+					Calendar.getInstance(),
+					Calendar.getInstance());
 			
-		Project project = new Project("Test Project" +(i+1), 
-				"A stub project while we wait for parsing to be implemented", 
-				Calendar.getInstance(),
-				Calendar.getInstance());
-		
-		Calendar dueDate = Calendar.getInstance();
-		dueDate.set(Calendar.DAY_OF_YEAR, dueDate.get(Calendar.DAY_OF_YEAR) + 5);
-
-		Calendar secondDue = Calendar.getInstance();
-		secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
-		
-		TaskBug tb1 = new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
-				dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
-				Calendar.getInstance(), true);
-		project.addTaskBug(tb1);
-		
-		project.addTaskBug(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
-				secondDue, Calendar.getInstance(), 50.0, dueDate,
-				Calendar.getInstance(), true));
-		
-		project.addTaskBug(new TaskBug("Bug 1", TaskBug.Status.OPEN, TaskBug.Priority.MEDIUM,
-				secondDue, Calendar.getInstance(), 33.3, dueDate,
-				Calendar.getInstance(), false));
-		
-		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
-		
-		DocumentPane docPane = new DocumentPane(project);
-		docPane.addUndoRedoEnabledListener(this);
-		tabbedPane.addTab(project.getName(), docPane);
-		
-		initTabComponent(i);
-
+			Calendar dueDate = Calendar.getInstance();
+			dueDate.set(Calendar.DAY_OF_YEAR, dueDate.get(Calendar.DAY_OF_YEAR) + 5);
+	
+			Calendar secondDue = Calendar.getInstance();
+			secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
+			
+			TaskBug tb1 = new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
+					dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
+					Calendar.getInstance(), true);
+			project.addTaskBug(tb1);
+			
+			project.addTaskBug(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
+					secondDue, Calendar.getInstance(), 50.0, dueDate,
+					Calendar.getInstance(), true));
+			
+			project.addTaskBug(new TaskBug("Bug 1", TaskBug.Status.OPEN, TaskBug.Priority.MEDIUM,
+					secondDue, Calendar.getInstance(), 33.3, dueDate,
+					Calendar.getInstance(), false));
+			
+			project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
+			
+			createNewTab(project);
 		}
 	}
-	private void initTabComponent(int j) {
-        tabbedPane.setTabComponentAt(j,
-                 new ButtonTabComponent(tabbedPane));
+	
+	private void createNewTab(Project project) {
+		DocumentPane docPane = new DocumentPane(project);
+		docPane.addUndoRedoEnabledListener(this);
+		
+		String tabTitle = project.getName();
+		tabbedPane.addTab(tabTitle, docPane);
+		
+		int newTabIndex = tabbedPane.indexOfTab(tabTitle);
+        tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
     }
+	
 	private JMenuBar createJMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		
