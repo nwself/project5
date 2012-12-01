@@ -84,15 +84,21 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 	
 	private void createNewTab(Project project) {
-		DocumentPane docPane = new DocumentPane(project);
-		docPane.addUndoRedoEnabledListener(this);
-		
 		String tabTitle = project.getName();
-		tabbedPane.addTab(tabTitle, docPane);
+		int tabIndex = tabbedPane.indexOfTab(tabTitle); 
 		
-		int newTabIndex = tabbedPane.indexOfTab(tabTitle);
-        tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
-    }
+		if (tabIndex == -1) {
+			DocumentPane docPane = new DocumentPane(project);
+			docPane.addUndoRedoEnabledListener(this);
+			
+			tabbedPane.addTab(tabTitle, docPane);
+			
+			int newTabIndex = tabbedPane.indexOfTab(tabTitle);
+	        tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
+		} else {
+			tabbedPane.setSelectedIndex(tabIndex);
+		}
+	}
 	
 	private JMenuBar createJMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -218,12 +224,11 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		int returnVal = fd.showOpenDialog(null);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
-		String fileName=fd.getSelectedFile().getName();
+			String fileName=fd.getSelectedFile().getName();
 		}
 		Project project1 = new Project("Test Project", "A stub project while we wait for parsing to be implemented", null, null);
-		DocumentPane docPane = new DocumentPane(project1);
-		docPane.addUndoRedoEnabledListener(this);
-		tabbedPane.addTab(project1.getName(), docPane);
+		createNewTab(project1);
+		tabbedPane.setSelectedIndex(tabbedPane.indexOfTab(project1.getName()));
 	}
 	
 	protected void closeFile() {
