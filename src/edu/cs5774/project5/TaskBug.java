@@ -1,9 +1,18 @@
 package edu.cs5774.project5;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class TaskBug {
+	
+	public TaskBug()
+	{
+		
+	}
+	
 	enum Status {
 		OPEN,
 		IN_PROGRESS,
@@ -15,6 +24,7 @@ public class TaskBug {
 		MEDIUM,
 		HIGH
 	}
+	
 	
 	private String title;
 	private Status status;
@@ -66,30 +76,39 @@ public class TaskBug {
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
+	@XmlElement(name="due_date",type=Calendar.class)
 	public Calendar getDueDate() {
 		return dueDate;
 	}
 	public void setDueDate(Calendar dueDate) {
 		this.dueDate = dueDate;
 	}
+	
+	@XmlElement(name="estimated_date",type=Calendar.class)
 	public Calendar getEstimatedDate() {
 		return estimatedDate;
 	}
 	public void setEstimatedDate(Calendar estimatedDate) {
 		this.estimatedDate = estimatedDate;
 	}
+	
+	@XmlElement(name="percentage_completed")
 	public double getPercentageCompleted() {
 		return percentageCompleted;
 	}
 	public void setPercentageCompleted(double percentageCompleted) {
 		this.percentageCompleted = percentageCompleted;
 	}
+	
+	@XmlElement(name="created_at",type=Calendar.class)
 	public Calendar getCreatedAt() {
 		return createdAt;
 	}
 	public void setCreatedAt(Calendar createdAt) {
 		this.createdAt = createdAt;
 	}
+	
+	@XmlElement(name="pubDate",type=Calendar.class)
 	public Calendar getUpdatedAt() {
 		return updatedAt;
 	}

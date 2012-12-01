@@ -53,7 +53,7 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 		TaskBug selectedTaskBug = ganttPane.getSelectedTaskBug();
 		
 		if (selectedTaskBug != null) {
-			project.removeTaskBug(selectedTaskBug);
+			project.removeTask(selectedTaskBug);
 			ganttPane.setProject(project);
 		}
 		

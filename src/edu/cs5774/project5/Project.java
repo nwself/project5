@@ -1,17 +1,34 @@
 package edu.cs5774.project5;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
 
 public class Project {
 	private String name;
+	
 	private String description;
+	
 	private Calendar createdAt;
+	
+
 	private Calendar updatedAt;
 	
+
 	private LinkedList<User> users = new LinkedList<User>();
-	private LinkedList<TaskBug> taskBugs = new LinkedList<TaskBug>();
 	
+	
+	private LinkedList<TaskBug> task = new LinkedList<TaskBug>();
+	private LinkedList<TaskBug> bug = new LinkedList<TaskBug>();
+	
+	
+	public Project()
+	{
+		
+	}
 	public Project(String name, String description, Calendar createdAt,
 			Calendar updatedAt) {
 		super();
@@ -28,21 +45,32 @@ public class Project {
 		this.updatedAt = other.updatedAt;
 		
 		this.users.addAll(other.users);
-		this.taskBugs.addAll(other.taskBugs);
+		this.task.addAll(other.task);
+		this.bug.addAll(other.bug);
+		
 	}
 
 	public void addUser(User user) {
 		users.add(user);
 	}
 	
-	public void addTaskBug(TaskBug taskBug) {
-		taskBugs.add(taskBug);
+	public void addTask(TaskBug taskBug) {
+		task.add(taskBug);
 	}
 
-	public void removeTaskBug(TaskBug taskBug) {
-		taskBugs.remove(taskBug);
+	public void removeTask(TaskBug taskBug) {
+		task.remove(taskBug);
 	}
 	
+	public void addBug(TaskBug taskBug) {
+		bug.add(taskBug);
+	}
+
+	public void removeBug(TaskBug taskBug) {
+		bug.remove(taskBug);
+	}
+	
+	@XmlElement(name="title")
 	public String getName() {
 		return name;
 	}
@@ -55,28 +83,43 @@ public class Project {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	@XmlElement(name="created_at",type=Calendar.class)
 	public Calendar getCreatedAt() {
 		return createdAt;
 	}
 	public void setCreatedAt(Calendar createdAt) {
 		this.createdAt = createdAt;
 	}
+	@XmlElement(name="pubDate",type=Date.class)
 	public Calendar getUpdatedAt() {
 		return updatedAt;
 	}
 	public void setUpdatedAt(Calendar updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
+	@XmlElement(name="user")
 	public LinkedList<User> getUsers() {
 		return users;
 	}
 	public void setUsers(LinkedList<User> users) {
 		this.users = users;
 	}
-	public LinkedList<TaskBug> getTaskBugs() {
-		return taskBugs;
+	
+	@XmlElement(name="task")
+	public List<TaskBug> getTask() {
+		return task;
 	}
-	public void setTaskBugs(LinkedList<TaskBug> taskBugs) {
-		this.taskBugs = taskBugs;
+	public void setTask(LinkedList<TaskBug> task) {
+		this.task = task;
 	}
+	
+	@XmlElement(name="bug")
+	public List<TaskBug> getBug() {
+		return bug;
+	}
+	public void setBug(LinkedList<TaskBug> bug) {
+		this.bug = bug;
+	}
+	
 }
