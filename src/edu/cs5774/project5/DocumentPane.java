@@ -13,10 +13,10 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 	private ProjectDetailsPane projectDetailsPane;
 	private TaskBugDetailsPane taskBugDetailsPane;
 
-	private Stack<Project> undoStack = new Stack<>();
-	private Stack<Project> redoStack = new Stack<>();
+	private Stack<Project> undoStack = new Stack<Project>();
+	private Stack<Project> redoStack = new Stack<Project>();
 
-	private LinkedList<ActionEnabledListener> listeners = new LinkedList<>();
+	private LinkedList<ActionEnabledListener> listeners = new LinkedList<ActionEnabledListener>();
 	
 	public DocumentPane(Project project) {
 		this.project = project;
