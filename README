@@ -1,1 +1,7 @@
 This is an eclipse project. You should be able to get this in your eclipse with File -> Import -> General -> Existing Projects into Workspace and point to your project5 directory.
+
+TODO:
+
+- Consider whether multiple Update from RSS calls should open many new tabs
+- Implement XML parsing/writing use this code to implement save/load
+- Restrict user from having same file open twice(?)

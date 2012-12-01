@@ -34,9 +34,9 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	
 	private TaskBugSeriesCollection dataset;
 	
-	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<>();
-	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<>();
-	private LinkedList<DeletionRequestedListener> deletionListeners =  new LinkedList<>();
+	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<TaskBugSelectionListener>();
+	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<ProjectSelectionListener>();
+	private LinkedList<DeletionRequestedListener> deletionListeners =  new LinkedList<DeletionRequestedListener>();
 	
 	private GanttSelectionRenderer ganttSelectionRenderer = new GanttSelectionRenderer();
 	private ChartPanel chartPanel;

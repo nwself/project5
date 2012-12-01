@@ -9,7 +9,7 @@ import org.jfree.data.time.SimpleTimePeriod;
 
 public class TaskBugSeriesCollection extends TaskSeriesCollection implements TaskBugSelectionListener, ProjectSelectionListener {
 
-	private HashMap<String, TaskBug> taskBugs = new HashMap<>();
+	private HashMap<String, TaskBug> taskBugs = new HashMap<String, TaskBug>();
 	private GanttSelectionRenderer ganttSelectionRenderer;
 
 	public TaskBugSeriesCollection(Project project, GanttSelectionRenderer ganttSelectionRenderer) {
