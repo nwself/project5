@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -95,9 +96,34 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		});
 		fileMenu.add(rssItem);
         JMenuItem openItem = new JMenuItem("Open");
+        openItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openFile();
+			}
+		});
         JMenuItem saveItem = new JMenuItem("Save");
+        JMenuItem closeItem = new JMenuItem("Close current");
+        closeItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				closeFile();
+			}
+		});
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
+        fileMenu.add(closeItem);
+        fileMenu.add(exitItem);
         
         JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
@@ -172,6 +198,22 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			DocumentPane docPane = (DocumentPane) selectedComponent;
 			docPane.deletionRequested();
 		}
+	}
+	protected void openFile() {
+		JFileChooser fd = new JFileChooser(".");
+		
+		int returnVal = fd.showOpenDialog(null);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		String fileName=fd.getSelectedFile().getName();
+		}
+		Project project1 = new Project("Test Project", "A stub project while we wait for parsing to be implemented", null, null);
+		DocumentPane docPane = new DocumentPane(project1);
+		docPane.addUndoRedoEnabledListener(this);
+		tabbedPane.addTab(project1.getName(), docPane);
+	}
+	
+	protected void closeFile() {
+		
 	}
 
 	protected static void createAndShowGUI() {
