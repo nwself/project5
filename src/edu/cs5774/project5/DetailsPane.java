@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.text.*;
 
 public class DetailsPane extends JPanel {
 	
@@ -40,13 +41,24 @@ public class DetailsPane extends JPanel {
 		this.add(nameLabel);
 		
 		JLabel descriptionLabel = new JLabel();
-		descriptionLabel.setText("Description: "+ project.getDescription());
+		Font newLabelFont=new Font(descriptionLabel.getFont().getName(),Font.BOLD,descriptionLabel.getFont().getSize());
+		JLabel word = new JLabel("Description: ");
+		word.setFont(newLabelFont);
+		descriptionLabel.setText(project.getDescription());
+		this.add(word);
 		this.add(descriptionLabel);
 		
-		JLabel numofusersLabel = new JLabel("Number of Users: " + project.getUsers().size());
+		JLabel numofusersLabel = new JLabel();
+		numofusersLabel.setText(Integer.toString(project.getUsers().size()));
+		word.setText("Number of Users: ");
+		word.setFont(newLabelFont);
+		this.add(word);
 		this.add(numofusersLabel);
 		
-		JLabel createdLabel = new JLabel("Date of Creation: " + project.getCreatedAt().getTime());
+		JLabel createdLabel = new JLabel(project.getCreatedAt().getTime().toString());	
+		word.setText("Date of Creation: ");
+		word.setFont(newLabelFont);
+		this.add(word);
 		this.add(createdLabel);
 		
 		this.revalidate();
@@ -57,27 +69,51 @@ public class DetailsPane extends JPanel {
 		this.repaint();
 		
 		JLabel titleLabel = new JLabel("Details for " + taskBug.getTitle());
+		Font f1=titleLabel.getFont();
+		titleLabel.setFont(f1.deriveFont(f1.getStyle()^Font.BOLD));
 		this.add(titleLabel);
 		
-		JLabel statusLabel = new JLabel("The status is : " + taskBug.getStatus());
+		JLabel statusLabel = new JLabel(taskBug.getStatus().toString());
+		Font newLabelFont1=new Font(statusLabel.getFont().getName(),Font.BOLD,statusLabel.getFont().getSize());
+		JLabel word = new JLabel("The status is : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(statusLabel);
 		
-		JLabel priorityLabel = new JLabel("The priority is : " + taskBug.getPriority());
+		JLabel priorityLabel = new JLabel(taskBug.getPriority().toString());
+		word = new JLabel("The priority is : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(priorityLabel);
 		
-		JLabel dueDateLabel = new JLabel("The due date is : " + taskBug.getDueDate());
+		JLabel dueDateLabel = new JLabel(taskBug.getDueDate().toString());
+		word = new JLabel("The due date is : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(dueDateLabel);
 		
-		JLabel estDateLabel = new JLabel("The estimated date is : " + taskBug.getEstimatedDate());
+		JLabel estDateLabel = new JLabel(taskBug.getEstimatedDate().getTime().toString());
+		word = new JLabel("The estimated date is : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(estDateLabel);
 		
-		JLabel percentCompLabel = new JLabel("Percentage completed is : " + taskBug.getPercentageCompleted());
+		JLabel percentCompLabel = new JLabel(Double.toString(taskBug.getPercentageCompleted()));
+		word = new JLabel("Percentage completed is : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(percentCompLabel);
 		
-		JLabel createdAtLabel = new JLabel("Created at : " + taskBug.getCreatedAt());
+		JLabel createdAtLabel = new JLabel(taskBug.getCreatedAt().getTime().toString());
+		word = new JLabel("Created at : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(createdAtLabel);
 		
-		JLabel updatedAtLabel = new JLabel("Updated at : " + taskBug.getUpdatedAt());
+		JLabel updatedAtLabel = new JLabel(taskBug.getUpdatedAt().getTime().toString());
+		word = new JLabel("Updated at : ");
+		word.setFont(newLabelFont1);
+		this.add(word);
 		this.add(updatedAtLabel);
 		
 		this.revalidate();
