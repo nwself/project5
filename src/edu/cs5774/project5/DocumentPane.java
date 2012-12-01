@@ -7,6 +7,8 @@ import javax.swing.JSplitPane;
 
 public class DocumentPane extends JSplitPane implements TaskBugSelectionListener, ProjectSelectionListener, DeletionRequestedListener {
 
+	private static final long serialVersionUID = -924992963282055777L;
+
 	private Project project;
 
 	private GanttChartPane ganttPane;

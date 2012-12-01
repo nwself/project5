@@ -1,34 +1,22 @@
 package edu.cs5774.project5;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.text.*;
 
 public class DetailsPane extends JPanel {
 	
-	private JPanel projectPanel;
-	private JPanel taskBugPanel;
-	
+	private static final long serialVersionUID = 3727883159676314045L;
+
 	private Project project;
 	
 	public DetailsPane(Project project) {
 		super(new GridLayout(0, 1));
 		this.project = project;
 		
-		// Create taskBugPanel, it will be filled in later
-//		taskBugPanel = new JPanel(new GridLayout(0,1));
-//		taskBugPanel.setVisible(false);
-//		this.add(taskBugPanel);
-//		
-//		projectPanel = new JPanel(new GridLayout(0,1));
 		fillInProjectPanel(project);
-//		this.add(projectPanel);
 	}
 	
 	private void fillInProjectPanel(Project project) {

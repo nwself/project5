@@ -42,7 +42,9 @@ import java.awt.event.*;
  * a JButton to close the tab it belongs to 
  */ 
 public class ButtonTabComponent extends JPanel {
-    private final JTabbedPane pane;
+	private static final long serialVersionUID = 2890514178643849339L;
+
+	private final JTabbedPane pane;
     private TabButton tabButton;
 
     public ButtonTabComponent(final JTabbedPane pane) {
@@ -56,7 +58,9 @@ public class ButtonTabComponent extends JPanel {
         
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel() {
-            public String getText() {
+			private static final long serialVersionUID = 588903451684774565L;
+
+			public String getText() {
                 int i = pane.indexOfTabComponent(ButtonTabComponent.this);
                 if (i != -1) {
                     return pane.getTitleAt(i);
@@ -79,7 +83,9 @@ public class ButtonTabComponent extends JPanel {
 		tabButton.closeTab();
 	}
     private class TabButton extends JButton implements ActionListener {
-        public TabButton() {
+		private static final long serialVersionUID = -4854310643228869474L;
+
+		public TabButton() {
             int size = 17;
             setPreferredSize(new Dimension(size, size));
             setToolTipText("close this tab");

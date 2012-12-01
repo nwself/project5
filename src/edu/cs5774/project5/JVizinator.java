@@ -2,11 +2,9 @@ package edu.cs5774.project5;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,8 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -29,7 +25,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.xml.bind.JAXBContext;
@@ -48,6 +43,8 @@ import org.apache.http.protocol.HttpContext;
 
 public class JVizinator extends JFrame implements ActionEnabledListener {
 	
+	private static final long serialVersionUID = -6822773346882930866L;
+
 	private JTabbedPane tabbedPane;
 	
 	private JMenuItem saveItem;

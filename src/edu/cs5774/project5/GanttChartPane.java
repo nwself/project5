@@ -1,11 +1,9 @@
 package edu.cs5774.project5;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
@@ -21,12 +19,10 @@ import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.TitleEntity;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.IntervalCategoryDataset;
-import org.jfree.data.gantt.Task;
-import org.jfree.data.gantt.TaskSeries;
-import org.jfree.data.gantt.TaskSeriesCollection;
-import org.jfree.data.time.SimpleTimePeriod;
 
 public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener {
+
+	private static final long serialVersionUID = -1201780568482094473L;
 
 	private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 	

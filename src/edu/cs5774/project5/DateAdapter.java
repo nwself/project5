@@ -2,7 +2,6 @@ package edu.cs5774.project5;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

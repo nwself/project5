@@ -7,6 +7,7 @@ import org.jfree.chart.renderer.category.GanttRenderer;
 
 public class GanttSelectionRenderer extends GanttRenderer {
 	
+	private static final long serialVersionUID = -2472039507871250135L;
 	private int selectedColumn = -1;
 	private static final Paint SELECTED_PAINT = Color.yellow;
 	

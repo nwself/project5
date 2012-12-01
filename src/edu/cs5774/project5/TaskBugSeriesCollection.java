@@ -9,6 +9,7 @@ import org.jfree.data.time.SimpleTimePeriod;
 
 public class TaskBugSeriesCollection extends TaskSeriesCollection implements TaskBugSelectionListener, ProjectSelectionListener {
 
+	private static final long serialVersionUID = 4675461723005553511L;
 	private HashMap<String, TaskBug> taskBugs = new HashMap<String, TaskBug>();
 	private GanttSelectionRenderer ganttSelectionRenderer;
 
