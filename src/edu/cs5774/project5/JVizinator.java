@@ -216,7 +216,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		});
         fileMenu.add(exitItem);
 		menuBar.add(fileMenu);
-        
+		
         /* EDIT MENU */
         JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
@@ -275,7 +275,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		try {
 			jaxbContext = JAXBContext.newInstance(Rss.class);
 		
-			Rss rss = new Rss();
+			Rss rssObject = new Rss();
 			Channel channel = new Channel();
 			
 			LinkedList<Project> projectList = new LinkedList<Project>();
@@ -285,12 +285,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 
 			channel.setItem(projectList);
 			
-			rss.setChannel(channel);
+			rssObject.setChannel(channel);
 			
 			File outputFile = new File(fileName);
 			
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			jaxbMarshaller.marshal(rss, outputFile);
+			jaxbMarshaller.marshal(rssObject, outputFile);
 
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -345,7 +345,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 
 	protected void closeFile() {
+		Component tabComponent = tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
 		
+		if (tabComponent instanceof ButtonTabComponent) {
+			ButtonTabComponent buttonTab = (ButtonTabComponent) tabComponent;
+			buttonTab.closeTab();
+		}
 	}
 
 	protected static void createAndShowGUI() {
