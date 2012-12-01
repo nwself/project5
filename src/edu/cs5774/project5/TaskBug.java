@@ -45,15 +45,7 @@ public class TaskBug {
 		Medium,
 		High
 	}
-	
-	
-	public LinkedList<User> getUsers() {
-		return users;
-	}
 
-	public void setUsers(LinkedList<User> users) {
-		this.users = users;
-	}
 	private String title;
 	private Status status;
 	private Priority priority;
@@ -63,13 +55,12 @@ public class TaskBug {
 	private Calendar createdAt;
 	private Calendar updatedAt;
 	private boolean isTask;
-	
-	private LinkedList<User> users = new LinkedList<User>();
+	private User user;
 	
 	public TaskBug(String title, Status status, Priority priority,
 			Calendar dueDate, Calendar estimatedDate,
 			double percentageCompleted, Calendar createdAt, Calendar updatedAt,
-			boolean isTask) {
+			boolean isTask, User user) {
 		super();
 		this.title = title;
 		this.status = status;
@@ -80,12 +71,17 @@ public class TaskBug {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.isTask = isTask;
+		this.user = user;
 	}
 	
-	public void addUser(User user) {
-		users.add(user);
+	public User getUser() {
+		return user;
 	}
-	
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	public String getTitle() {
 		return title;
 	}
