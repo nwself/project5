@@ -28,11 +28,14 @@ public class DetailsPane extends JPanel {
 	
 	private void fillInProjectPanel(Project project) {
 		JLabel nameLabel = new JLabel("Details for " + project.getName());
-		JLabel descriptionLabel = new JLabel("Details for " + project.getDescription());
-		JLabel createdLabel = new JLabel("Details for " + project.getCreatedAt());
+		JLabel descriptionLabel = new JLabel("Description: " + project.getDescription());
+		JLabel numofusersLabel = new JLabel("Number of Users: " + project.getUsers().size());
+		JLabel createdLabel = new JLabel("Date of Creation: " + project.getCreatedAt());
 		projectPanel.add(nameLabel);
 		projectPanel.add(descriptionLabel);
+		projectPanel.add(numofusersLabel);
 		projectPanel.add(createdLabel);
+		
 		
 	}
 
