@@ -44,6 +44,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	
 	private JTabbedPane tabbedPane;
 	
+	private JMenuItem saveItem;
 	private JMenuItem closeItem;
 	private JMenuItem undoItem;
 	private JMenuItem redoItem;
@@ -184,8 +185,9 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         fileMenu.add(openItem);
         
         // Save file
-        JMenuItem saveItem = new JMenuItem("Save", KeyEvent.VK_S);
+        saveItem = new JMenuItem("Save", KeyEvent.VK_S);
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        saveItem.setEnabled(false);
         saveItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -360,7 +362,9 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 
 	private void updateCloseTabEnabled() {
-		closeItem.setEnabled(tabbedPane.getTabCount() != 0);
+		boolean anyTabs = tabbedPane.getTabCount() != 0;
+		saveItem.setEnabled(anyTabs);
+		closeItem.setEnabled(anyTabs);
 	}
 
 	protected static void createAndShowGUI() {
