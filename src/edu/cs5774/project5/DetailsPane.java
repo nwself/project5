@@ -13,47 +13,86 @@ public class DetailsPane extends JPanel {
 	private JPanel projectPanel;
 	private JPanel taskBugPanel;
 	
+	private Project project;
+	
 	public DetailsPane(Project project) {
 		super(new GridLayout(0, 1));
-
-		// Create taskBugPanel, it will be filled in later
-		taskBugPanel = new JPanel(new FlowLayout());
-		taskBugPanel.setVisible(false);
-		this.add(taskBugPanel);
+		this.project = project;
 		
-		projectPanel = new JPanel(new BorderLayout());
+		// Create taskBugPanel, it will be filled in later
+//		taskBugPanel = new JPanel(new GridLayout(0,1));
+//		taskBugPanel.setVisible(false);
+//		this.add(taskBugPanel);
+//		
+//		projectPanel = new JPanel(new GridLayout(0,1));
 		fillInProjectPanel(project);
-		this.add(projectPanel);
+//		this.add(projectPanel);
 	}
 	
 	private void fillInProjectPanel(Project project) {
-		JLabel nameLabel = new JLabel("Details for " + project.getName());
-//		JLabel descriptionLabel = new JLabel("Details for " + project.getDescription());
-//		JLabel createdLabel = new JLabel("Details for " + project.getCreatedAt());
-		projectPanel.add(nameLabel);
-//		projectPanel.add(descriptionLabel);
-//		projectPanel.add(createdLabel);
+		this.removeAll();
+		this.repaint();
 		
+		JLabel nameLabel = new JLabel();
+		nameLabel.setText("Details for " + project.getName());
+		Font f=nameLabel.getFont();
+		nameLabel.setFont(f.deriveFont(f.getStyle()^Font.BOLD));
+		this.add(nameLabel);
+		
+		JLabel descriptionLabel = new JLabel();
+		descriptionLabel.setText("Description: "+ project.getDescription());
+		this.add(descriptionLabel);
+		
+		JLabel numofusersLabel = new JLabel("Number of Users: " + project.getUsers().size());
+		this.add(numofusersLabel);
+		
+		JLabel createdLabel = new JLabel("Date of Creation: " + project.getCreatedAt().getTime());
+		this.add(createdLabel);
+		
+		this.revalidate();
 	}
 
 	private void fillInTaskBugPanel(TaskBug taskBug) {
-		taskBugPanel.removeAll();
-		taskBugPanel.repaint();
+		this.removeAll();
+		this.repaint();
 		
 		JLabel titleLabel = new JLabel("Details for " + taskBug.getTitle());
-		taskBugPanel.add(titleLabel);
-		taskBugPanel.revalidate();
+		this.add(titleLabel);
+		
+		JLabel statusLabel = new JLabel("The status is : " + taskBug.getStatus());
+		this.add(statusLabel);
+		
+		JLabel priorityLabel = new JLabel("The priority is : " + taskBug.getPriority());
+		this.add(priorityLabel);
+		
+		JLabel dueDateLabel = new JLabel("The due date is : " + taskBug.getDueDate());
+		this.add(dueDateLabel);
+		
+		JLabel estDateLabel = new JLabel("The estimated date is : " + taskBug.getEstimatedDate());
+		this.add(estDateLabel);
+		
+		JLabel percentCompLabel = new JLabel("Percentage completed is : " + taskBug.getPercentageCompleted());
+		this.add(percentCompLabel);
+		
+		JLabel createdAtLabel = new JLabel("Created at : " + taskBug.getCreatedAt());
+		this.add(createdAtLabel);
+		
+		JLabel updatedAtLabel = new JLabel("Updated at : " + taskBug.getUpdatedAt());
+		this.add(updatedAtLabel);
+		
+		this.revalidate();
 	}
 
 	public void showTaskBug(TaskBug taskBug) {
-		projectPanel.setVisible(false);
+		//projectPanel.setVisible(false);
 
 		fillInTaskBugPanel(taskBug);
-		taskBugPanel.setVisible(true);
+		//taskBugPanel.setVisible(true);
 	}
 
 	public void showProject() {
-		projectPanel.setVisible(true);
-		taskBugPanel.setVisible(false);
+		//projectPanel.setVisible(true);
+		//taskBugPanel.setVisible(false);
+		fillInProjectPanel(project);
 	}
 }
