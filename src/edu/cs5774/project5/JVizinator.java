@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -62,14 +65,9 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         this.setVisible(true);
 	}
 
-	private void updateFromRSS() throws ClientProtocolException, IOException {
-		// TODO: Krunal get RSS and parse it
-		// in the meantime, build a test Project and display it
-		
-		
-		
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		httpclient.setRedirectStrategy(new DefaultRedirectStrategy() {                
+	private HttpResponse fetchFeed() {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		httpClient.setRedirectStrategy(new DefaultRedirectStrategy() {                
 	        public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context)  {
 	            boolean isRedirect=false;
 	            try {
@@ -87,84 +85,46 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	            return isRedirect;
 	        }
 	    });
-		try {
-			
-			HttpResponse response = null;
-			HttpGet httpget = new HttpGet("http://localhost:3000/feed");
-			response = httpclient.execute(httpget);
-			 
-			JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
-	 
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			Rss r = (Rss) jaxbUnmarshaller.unmarshal(new InputStreamReader(response.getEntity().getContent()));
-			//Rss project = (Rss) jaxbUnmarshaller.unmarshal(new File("E:\\rss.xml"));
-			System.out.println(r.getChannel());
-			System.out.println("successful");
-			Project project = r.getChannel().getItem().get(0);
-			DocumentPane docPane = new DocumentPane(project);
-			docPane.addUndoRedoEnabledListener(this);
-			tabbedPane.addTab(project.getName(), docPane);
-		      } catch (JAXBException e) {
-			e.printStackTrace();
-		      }
-	
-		Project project = new Project("Test Project", 
-				"A stub project while we wait for parsing to be implemented", 
-				Calendar.getInstance(),
-				Calendar.getInstance());
-		
-		Calendar dueDate = Calendar.getInstance();
-		dueDate.set(Calendar.DAY_OF_YEAR, dueDate.get(Calendar.DAY_OF_YEAR) + 5);
 
-		Calendar secondDue = Calendar.getInstance();
-		secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
-		
-		TaskBug tb1 = new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
-				dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
-				Calendar.getInstance(), true);
-		project.addTask(tb1);
-		
-		project.addTask(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
-				secondDue, Calendar.getInstance(), 50.0, dueDate,
-				Calendar.getInstance(), true));
-		
-		project.addBug(new TaskBug("Bug 1", TaskBug.Status.OPEN, TaskBug.Priority.MEDIUM,
-				secondDue, Calendar.getInstance(), 33.3, dueDate,
-				Calendar.getInstance(), false));
-		
-		project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
-		/*int projCount = 5; //'projCount' will be the number of projects found by Krunal's parser, meanwhile 'projCount = 5'
-		
-		for(int i=0; i<projCount; i++) 
-		{
-			Project project = new Project("Test Project" +(i+1), 
-					"A stub project while we wait for parsing to be implemented", 
-					Calendar.getInstance(),
-					Calendar.getInstance());
-			
-			Calendar dueDate = Calendar.getInstance();
-			dueDate.set(Calendar.DAY_OF_YEAR, dueDate.get(Calendar.DAY_OF_YEAR) + 5);
+		HttpResponse response = null;
+		HttpGet httpGet = new HttpGet("http://localhost:3000/feed");
+		try {
+			response = httpClient.execute(httpGet);
+		} catch (ClientProtocolException e) {
+			response = null;
+			e.printStackTrace();
+		} catch (IOException e) {
+			response = null;
+			e.printStackTrace();
+		}
+		return response;
+	}
 	
-			Calendar secondDue = Calendar.getInstance();
-			secondDue.set(Calendar.DAY_OF_YEAR, secondDue.get(Calendar.DAY_OF_YEAR) + 10);
-			
-			TaskBug tb1 = new TaskBug("Task 1", TaskBug.Status.COMPLETE, TaskBug.Priority.HIGH, 
-					dueDate, Calendar.getInstance(), 100.0, Calendar.getInstance(),
-					Calendar.getInstance(), true);
-			project.addTask(tb1);
-			
-			project.addTask(new TaskBug("Task 2", TaskBug.Status.IN_PROGRESS, TaskBug.Priority.LOW, 
-					secondDue, Calendar.getInstance(), 50.0, dueDate,
-					Calendar.getInstance(), true));
-			
-			project.addTask(new TaskBug("Bug 1", TaskBug.Status.OPEN, TaskBug.Priority.MEDIUM,
-					secondDue, Calendar.getInstance(), 33.3, dueDate,
-					Calendar.getInstance(), false));
-			
-			project.addUser(new User("userfoo", "userfoo@bar.baz", Calendar.getInstance()));
-			
-			createNewTab(project);
-		}*/
+	private void openFilesFromStream(InputStream inputStream) throws JAXBException {
+		JAXBContext jaxbContext;
+        jaxbContext = JAXBContext.newInstance(Rss.class);
+        
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        Rss rssObject = (Rss) jaxbUnmarshaller.unmarshal(inputStream);
+        
+        for (Project project : rssObject.getChannel().getItem()) {
+        	createNewTab(project);
+        }
+	}
+	
+	private void updateFromRSS() throws ClientProtocolException, IOException {
+		HttpResponse response = fetchFeed();
+		
+		if (response != null) {
+			try {
+				openFilesFromStream(response.getEntity().getContent());
+			} catch (Exception e) {
+				e.printStackTrace();
+				showErrorMessage("Parsing of RSS feed failed");
+			}
+		} else {
+			showErrorMessage("RSS feed could not be fetched");
+		}
 	}
 	
 	private void createNewTab(Project project) {
@@ -297,6 +257,8 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 	
 	protected void saveFile() {
+		String fileName = "text.out"; // TODO: use JFileChooser to get filename
+		
 		JAXBContext jaxbContext;
 		try {
 			jaxbContext = JAXBContext.newInstance(Rss.class);
@@ -313,17 +275,15 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			
 			rss.setChannel(channel);
 			
-			File outputFile = new File("text.out");
+			File outputFile = new File(fileName);
 			
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.marshal(rss, outputFile);
 
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			showErrorMessage("Could not save file to " + fileName + " JAXB marshalling failed");
 		}
-//		Rss r = (Rss) jaxbUnmarshaller.marshal(new InputStreamReader(response.getEntity().getContent()));
-
 	}
 
 	protected void redoDeletion() {
@@ -350,35 +310,28 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		}
 	}
 	protected void openFile() {
-		JFileChooser fd = new JFileChooser(".");
+		JFileChooser fileChooser = new JFileChooser(".");
 		
-		int returnVal = fd.showOpenDialog(null);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			String fileName=fd.getSelectedFile().getName();
-			
-			JAXBContext jaxbContext;
+		int returnVal = fileChooser.showOpenDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String fileName = fileChooser.getSelectedFile().getName();
 			try {
-				jaxbContext = JAXBContext.newInstance(Rss.class);
-			 
-				Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-				Rss r = (Rss) jaxbUnmarshaller.unmarshal(new File(fileName));
-				//Rss project = (Rss) jaxbUnmarshaller.unmarshal(new File("E:\\rss.xml"));
-				System.out.println(r.getChannel());
-				System.out.println("successful");
-				Project project = r.getChannel().getItem().get(0);
-
-				createNewTab(project);
+				openFilesFromStream(new FileInputStream(new File(fileName)));
+			} catch (FileNotFoundException noFileException) {
+				noFileException.printStackTrace();
+				showErrorMessage("No such file: " + fileName);
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				showErrorMessage("Could not parse file: " + fileName);
 			}
 		}
-		Project project1 = new Project("Test Project", "A stub project while we wait for parsing to be implemented", null, null);
-		DocumentPane docPane = new DocumentPane(project1);
-		docPane.addUndoRedoEnabledListener(this);
-		tabbedPane.addTab(project1.getName(), docPane);
 	}
 	
+	private void showErrorMessage(String errorMessage) {
+		// TODO show an error dialog with errorMessage in it
+		
+	}
+
 	protected void closeFile() {
 		
 	}
