@@ -44,6 +44,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	
 	private JTabbedPane tabbedPane;
 	
+	private JMenuItem closeItem;
 	private JMenuItem undoItem;
 	private JMenuItem redoItem;
 	private JMenuItem deleteItem;
@@ -148,6 +149,8 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		} else {
 			tabbedPane.setSelectedIndex(tabIndex);
 		}
+		
+		updateCloseTabEnabled();
     }
 	
 	private JMenuBar createJMenuBar() {
@@ -193,8 +196,9 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         fileMenu.add(saveItem);
         
         // Close current tab
-        JMenuItem closeItem = new JMenuItem("Close current tab", KeyEvent.VK_C);
+        closeItem = new JMenuItem("Close current tab", KeyEvent.VK_C);
         closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+        closeItem.setEnabled(false);
         closeItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -351,6 +355,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			ButtonTabComponent buttonTab = (ButtonTabComponent) tabComponent;
 			buttonTab.closeTab();
 		}
+		
+		updateCloseTabEnabled();
+	}
+
+	private void updateCloseTabEnabled() {
+		closeItem.setEnabled(tabbedPane.getTabCount() != 0);
 	}
 
 	protected static void createAndShowGUI() {
