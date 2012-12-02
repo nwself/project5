@@ -158,5 +158,9 @@ public class Project {
 	public void setBug(LinkedList<TaskBug> bug) {
 		this.bug = bug;
 	}
+
+	public int getUsersCount() {
+		return task.size() + bug.size();
+	}
 	
 }
