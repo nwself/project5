@@ -19,14 +19,17 @@ import java.util.Set;
 
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -68,13 +71,17 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         setupTabTraversalKeys(tabbedPane);
         jviz.add(tabbedPane);
         this.setContentPane(jviz);
-        
-        // Start the program with the RSS feed loaded
-        updateFromRSS();
  
         //Display the window.
         this.pack();
         this.setVisible(true);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	// Start the program with the RSS feed loaded
+                updateFromRSS();
+            }
+        });
 	}
 
 	private HttpResponse fetchFeed() {
@@ -225,6 +232,9 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         fileMenu.add(saveItem);
         fileMenu.addSeparator();
          
+        //Save as 
+        JMenuItem saveasItem = new JMenuItem("Save As", KeyEvent.VK_A);
+         
         // Close current tab
         closeItem = new JMenuItem("Close Tab", KeyEvent.VK_C);
         closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
@@ -302,9 +312,33 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		return menuBar;
 	}
+	public class XMLFileFilter extends FileFilter
+	{
+	     public boolean accept(File f)
+	    {
+	    	 System.out.println(f.getName());
+	    	  if (f.getName().endsWith(".xml")||f.isDirectory())
+	    	 {
+	    		 System.out.println("xml");
+	    		 return true;
+	    	 }
+	    	 else return false;
+	    }
 	
+	    public String getDescription()
+	    {
+	        return "XML files (*.xml)";
+	    }
+	}
 	protected void saveFile() {
-		String fileName = "text.xml"; // TODO: use JFileChooser to get filename
+		JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setFileFilter(new XMLFileFilter());
+		String fileName="";
+		int returnVal = fileChooser.showSaveDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			if(fileChooser.getSelectedFile()!=null)
+			{		fileName = fileChooser.getSelectedFile().getName();
+	System.out.println(fileName);
 		
 		JAXBContext jaxbContext;
 		try {
@@ -330,6 +364,8 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			showErrorMessage("Could not save file to " + fileName + " JAXB marshalling failed");
+		}
+			}
 		}
 	}
 
@@ -375,8 +411,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 	
 	private void showErrorMessage(String errorMessage) {
-		// TODO show an error dialog with errorMessage in it
-		
+		JOptionPane.showMessageDialog(this, errorMessage);
 	}
 
 	protected void closeFile() {
@@ -402,7 +437,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 
 	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
             }
