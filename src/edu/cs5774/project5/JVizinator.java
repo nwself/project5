@@ -30,7 +30,10 @@ import javax.swing.KeyStroke;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.SchemaOutputResolver;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -110,8 +113,15 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 	
 	private void openFilesFromStream(InputStream inputStream) throws JAXBException {
-		JAXBContext jaxbContext;
-        jaxbContext = JAXBContext.newInstance(Rss.class);
+		JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
+        
+        SchemaOutputResolver sor = new MySchemaOutputResolver();
+        try {
+			jaxbContext.generateSchema(sor);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         Rss rssObject = (Rss) jaxbUnmarshaller.unmarshal(inputStream);
@@ -121,6 +131,16 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         }
 	}
 	
+	private class MySchemaOutputResolver extends SchemaOutputResolver {
+		 
+	    public Result createOutput(String namespaceURI, String suggestedFileName) throws IOException {
+	    	File file = new File(suggestedFileName);
+	        StreamResult result = new StreamResult(file);
+	        result.setSystemId(file.toURI().toURL().toString());
+	        return result;
+	    }
+	 
+	}
 	private void updateFromRSS() {
 		HttpResponse response = fetchFeed();
 		
@@ -284,7 +304,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 	
 	protected void saveFile() {
-		String fileName = "text.out"; // TODO: use JFileChooser to get filename
+		String fileName = "text.xml"; // TODO: use JFileChooser to get filename
 		
 		JAXBContext jaxbContext;
 		try {
