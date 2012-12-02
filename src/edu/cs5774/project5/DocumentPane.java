@@ -28,6 +28,8 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 		this.setLeftComponent(ganttPane);
 		this.setRightComponent(detailsPane);
 
+		detailsPane.addTaskBugSelectionListener(ganttPane);
+		
 		ganttPane.addTaskBugSelectionListener(this);
 		ganttPane.addProjectSelectionListener(this);
 		ganttPane.addDeletionRequestedListener(this);
@@ -56,6 +58,7 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 		
 		if (selectedTaskBug != null) {
 			project.removeTask(selectedTaskBug);
+			detailsPane.setProject(project);
 			ganttPane.setProject(project);
 		}
 		
@@ -72,6 +75,7 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 	public void undoDeletion() {
 		redoStack.push(project);
 		project = undoStack.pop();
+		detailsPane.setProject(project);
 		ganttPane.setProject(project);
 		
 		fireUndoRedoEnabled();
@@ -80,6 +84,7 @@ public class DocumentPane extends JSplitPane implements TaskBugSelectionListener
 	public void redoDeletion() {
 		undoStack.push(project);
 		project = redoStack.pop();
+		detailsPane.setProject(project);
 		ganttPane.setProject(project);
 		
 		fireUndoRedoEnabled();

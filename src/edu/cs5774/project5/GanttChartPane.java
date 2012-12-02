@@ -20,7 +20,7 @@ import org.jfree.chart.entity.TitleEntity;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.IntervalCategoryDataset;
 
-public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener {
+public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener, TaskBugSelectionListener {
 
 	private static final long serialVersionUID = -1201780568482094473L;
 
@@ -184,6 +184,13 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 
 	public TaskBug getSelectedTaskBug() {
 		return dataset.getSelectedTaskBug();
+	}
+
+	@Override
+	public void taskBugSelected(TaskBug taskBug) {
+		dataset.getTaskBugByTitle(taskBug.getTitle());
+		fireTaskBugSelected(taskBug);
+		chartPanel.revalidate();
 	}
 }
  

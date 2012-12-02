@@ -1,8 +1,16 @@
 package edu.cs5774.project5;
 
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -11,6 +19,8 @@ public class DetailsPane extends JPanel {
 	private static final long serialVersionUID = 3727883159676314045L;
 
 	private Project project;
+
+	private LinkedList<TaskBugSelectionListener> listeners = new LinkedList<TaskBugSelectionListener>();
 	
 	public DetailsPane(Project project) {
 		super(new GridLayout(0, 1));
@@ -60,6 +70,63 @@ public class DetailsPane extends JPanel {
 		both2.add(word3);
 		both2.add(createdLabel);
 		this.add(both2);
+		
+		
+		List<TaskBug> taskList = new ArrayList<TaskBug>();
+		taskList = project.getTask();
+		Iterator<TaskBug> taskListItr = taskList.iterator();
+		while(taskListItr.hasNext())
+		{
+			JLabel taskLabel = new JLabel();	
+			JLabel word4 = new JLabel();
+			JPanel both3=new JPanel();
+			JButton detailsButton = new JButton("View Details");
+
+			final TaskBug element = taskListItr.next();
+			taskLabel.setText(element.getTitle());
+			word4.setText("Task: ");
+			detailsButton.setActionCommand(element.getTitle());
+			detailsButton.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					fillInTaskBugPanel(element);
+					fireTaskBugSelected(element);
+				}
+			});
+			word4.setFont(newLabelFont);
+			both3.add(word4);
+			both3.add(taskLabel);
+			both3.add(detailsButton);
+			this.add(both3);
+		}
+		
+		
+		List<TaskBug> bugList = new ArrayList<TaskBug>();
+		bugList = project.getBug();
+		Iterator<TaskBug> bugListItr = bugList.iterator();
+		while(bugListItr.hasNext())
+		{
+			JLabel bugLabel = new JLabel();	
+			JLabel word5 = new JLabel();
+			JPanel both4=new JPanel();
+			JButton detailsButton1 = new JButton("View Details");
+
+			final TaskBug element1 = bugListItr.next();
+			bugLabel.setText(element1.getTitle());
+			word5.setText("Bug: ");
+			detailsButton1.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					fireTaskBugSelected(element1);
+					fillInTaskBugPanel(element1);
+				}
+			});
+			word5.setFont(newLabelFont);
+			both4.add(word5);
+			both4.add(bugLabel);
+			both4.add(detailsButton1);
+			this.add(both4);
+		}
 		
 		this.revalidate();
 	}
@@ -121,15 +188,27 @@ public class DetailsPane extends JPanel {
 	}
 
 	public void showTaskBug(TaskBug taskBug) {
-		//projectPanel.setVisible(false);
-
 		fillInTaskBugPanel(taskBug);
-		//taskBugPanel.setVisible(true);
 	}
 
 	public void showProject() {
-		//projectPanel.setVisible(true);
-		//taskBugPanel.setVisible(false);
+		fillInProjectPanel(project);
+	}
+	
+	protected void fireTaskBugSelected(TaskBug taskBug) {
+		for (TaskBugSelectionListener listener : listeners) {
+			listener.taskBugSelected(taskBug);
+		}
+	}
+
+	public void addTaskBugSelectionListener(TaskBugSelectionListener listener) {
+		if (listener != null) {
+			listeners.add(listener);
+		}
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 		fillInProjectPanel(project);
 	}
 }
