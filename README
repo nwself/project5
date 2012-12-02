@@ -1,7 +1,12 @@
-This is an eclipse project. You should be able to get this in your eclipse with File -> Import -> General -> Existing Projects into Workspace and point to your project5 directory.
+PROJECT 5 - JVizinator
+Group 3: Krunal Doshi, Manpreet Hora, Nathan Self, Noha ElSherbiny
+PIDs: doshi87, khmanp8, nwself, noha
 
-TODO:
+project file: 
+This is a java desktop application that visualizes the RSS feed from the project management tool built on RoR in project 4
 
-- Consider whether multiple Update from RSS calls should open many new tabs
-- Implement XML parsing/writing use this code to implement save/load
-- Restrict user from having same file open twice(?)
+**To run, please import the project into eclipse with File -> Import -> General -> Existing Projects into Workspace and point to your project5 directory.**
+
+The application creates a Gantt chart of the different projects. The progress (% completed, start date and due date) for all of the tasks/bugs for each project is displayed. 
+
+
