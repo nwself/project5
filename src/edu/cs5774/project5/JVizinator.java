@@ -124,14 +124,6 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	private void openFilesFromStream(InputStream inputStream, String savedPath) throws JAXBException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
         
-        SchemaOutputResolver sor = new MySchemaOutputResolver();
-        try {
-			jaxbContext.generateSchema(sor);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         Rss rssObject = (Rss) jaxbUnmarshaller.unmarshal(inputStream);
         
@@ -147,16 +139,6 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         }
 	}
 	
-	private class MySchemaOutputResolver extends SchemaOutputResolver {
-		 
-	    public Result createOutput(String namespaceURI, String suggestedFileName) throws IOException {
-	    	File file = new File(suggestedFileName);
-	        StreamResult result = new StreamResult(file);
-	        result.setSystemId(file.toURI().toURL().toString());
-	        return result;
-	    }
-	 
-	}
 	private void updateFromRSS() {
 		HttpResponse response = fetchFeed();
 		

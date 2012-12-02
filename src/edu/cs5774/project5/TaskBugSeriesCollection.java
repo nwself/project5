@@ -1,5 +1,6 @@
 package edu.cs5774.project5;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,14 +15,18 @@ public class TaskBugSeriesCollection extends TaskSeriesCollection implements Tas
 	private HashMap<String, TaskBug> taskBugs = new HashMap<String, TaskBug>();
 	private GanttSelectionRenderer ganttSelectionRenderer;
 	
+	private TaskSeries taskSeries;
+	
 	public TaskBugSeriesCollection(Project project, GanttSelectionRenderer ganttSelectionRenderer) {
 		this.ganttSelectionRenderer = ganttSelectionRenderer;
+		
+		project.addTaskBugSelectionListener(this);
 		
 		// Make sure selection is clear
 		ganttSelectionRenderer.setSelectedColumn(-1);
 
 		// Create task series for tasks and bugs
-		TaskSeries taskSeries = new TaskSeries("Tasks");
+		taskSeries = new TaskSeries("Tasks");
 		TaskSeries bugSeries = new TaskSeries("Bugs");
 		
 		addTaskBugsToSeries(project.getTask(), taskSeries);
@@ -54,18 +59,6 @@ public class TaskBugSeriesCollection extends TaskSeriesCollection implements Tas
 		
 		return selectedTaskBug;
 	}
-	
-	public TaskBug getSelectedTaskBug() {
-		TaskBug selectedTaskBug = null;
-		
-		int selectedColumn = ganttSelectionRenderer.getSelectedColumn();
-		if (selectedColumn != -1) {
-			String taskBugTitle = (String) this.getColumnKey(selectedColumn);
-			selectedTaskBug = this.getTaskBugByTitle(taskBugTitle);
-		}
-		
-		return selectedTaskBug;
-	}
 
 	@Override
 	public void taskBugSelected(TaskBug taskBug) {
@@ -76,6 +69,12 @@ public class TaskBugSeriesCollection extends TaskSeriesCollection implements Tas
 		}
 		
 		ganttSelectionRenderer.setSelectedColumn(columnIndex);
+		
+		// This is a hack required because JFreeChart will not redraw
+		// despite calls to repaint/revalidate unless the data has changed.
+		Task emptyTask = new Task("", new Date(), new Date());
+		taskSeries.add(emptyTask);
+		taskSeries.remove(emptyTask);
 	}
 
 	@Override

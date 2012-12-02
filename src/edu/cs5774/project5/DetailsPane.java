@@ -14,22 +14,21 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class DetailsPane extends JPanel {
+public class DetailsPane extends JPanel implements TaskBugSelectionListener {
 	
 	private static final long serialVersionUID = 3727883159676314045L;
 
 	private Project project;
 
-	private LinkedList<TaskBugSelectionListener> listeners = new LinkedList<TaskBugSelectionListener>();
-	
 	public DetailsPane(Project project) {
 		super(new GridLayout(0, 1));
 		this.project = project;
 		
+		project.addTaskBugSelectionListener(this);
 		fillInProjectPanel(project);
 	}
 	
-	private void fillInProjectPanel(Project project) {
+	private void fillInProjectPanel(final Project project) {
 		this.removeAll();
 		this.repaint();
 		
@@ -89,8 +88,7 @@ public class DetailsPane extends JPanel {
 			detailsButton.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					fillInTaskBugPanel(element);
-					fireTaskBugSelected(element);
+					project.setSelectedTaskBug(element);
 				}
 			});
 			word4.setFont(newLabelFont);
@@ -117,8 +115,7 @@ public class DetailsPane extends JPanel {
 			detailsButton1.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					fireTaskBugSelected(element1);
-					fillInTaskBugPanel(element1);
+					project.setSelectedTaskBug(element1);
 				}
 			});
 			word5.setFont(newLabelFont);
@@ -187,28 +184,20 @@ public class DetailsPane extends JPanel {
 		this.revalidate();
 	}
 
-	public void showTaskBug(TaskBug taskBug) {
-		fillInTaskBugPanel(taskBug);
-	}
 
 	public void showProject() {
 		fillInProjectPanel(project);
-	}
-	
-	protected void fireTaskBugSelected(TaskBug taskBug) {
-		for (TaskBugSelectionListener listener : listeners) {
-			listener.taskBugSelected(taskBug);
-		}
-	}
-
-	public void addTaskBugSelectionListener(TaskBugSelectionListener listener) {
-		if (listener != null) {
-			listeners.add(listener);
-		}
 	}
 
 	public void setProject(Project project) {
 		this.project = project;
 		fillInProjectPanel(project);
+	}
+
+	@Override
+	public void taskBugSelected(TaskBug taskBug) {
+		if (taskBug != null) {
+			fillInTaskBugPanel(taskBug);
+		}
 	}
 }

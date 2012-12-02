@@ -23,6 +23,9 @@ public class Project {
 	
 	private String savedPath;
 	
+	private TaskBug selectedTaskBug;
+	private LinkedList<TaskBugSelectionListener> listeners = new LinkedList<TaskBugSelectionListener>();
+	
 	public Project() {}
 
 	public Project(String name, String description, Calendar createdAt,
@@ -46,6 +49,20 @@ public class Project {
 		this.bug.addAll(other.bug);
 	}
 
+	public void addTaskBugSelectionListener(TaskBugSelectionListener listener) {
+		listeners.add(listener);
+	}
+	
+	public TaskBug getSelectedTaskBug() {
+		return selectedTaskBug;
+	}
+	
+	public void setSelectedTaskBug(TaskBug newSelection) {
+		selectedTaskBug = newSelection;
+		for (TaskBugSelectionListener listener : listeners) {
+			listener.taskBugSelected(selectedTaskBug);
+		}
+	}
 	
 	public String getSavedPath() {
 		return savedPath;

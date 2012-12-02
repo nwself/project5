@@ -20,7 +20,7 @@ import org.jfree.chart.entity.TitleEntity;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.IntervalCategoryDataset;
 
-public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener, TaskBugSelectionListener {
+public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener {
 
 	private static final long serialVersionUID = -1201780568482094473L;
 
@@ -30,7 +30,6 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	
 	private TaskBugSeriesCollection dataset;
 	
-	private LinkedList<TaskBugSelectionListener> taskBugListeners = new LinkedList<TaskBugSelectionListener>();
 	private LinkedList<ProjectSelectionListener> projectListeners = new LinkedList<ProjectSelectionListener>();
 	private LinkedList<DeletionRequestedListener> deletionListeners =  new LinkedList<DeletionRequestedListener>();
 	
@@ -50,7 +49,6 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		
 		// Rebuild dataset
 		dataset = new TaskBugSeriesCollection(project, ganttSelectionRenderer);
-		this.addTaskBugSelectionListener(dataset);
 		this.addProjectSelectionListener(dataset);
 		
 		// Rebuild chart
@@ -78,18 +76,6 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
         plot.setRenderer(ganttSelectionRenderer);
 
 		return chart;
-	}
-
-	public void addTaskBugSelectionListener(TaskBugSelectionListener listener) {
-		if (listener != null) {
-			taskBugListeners.add(listener);
-		}
-	}
-
-	private void fireTaskBugSelected(TaskBug selectedTaskBug) {
-		for (TaskBugSelectionListener listener : taskBugListeners) {
-			listener.taskBugSelected(selectedTaskBug);
-		}
 	}
 
 	public void addProjectSelectionListener(ProjectSelectionListener listener) {
@@ -121,19 +107,21 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 			CategoryItemEntity entity = (CategoryItemEntity) chartEntity;
 			String entityTitle = (String) entity.getColumnKey();
 			
-			fireTaskBugSelected(dataset.getTaskBugByTitle(entityTitle));
+			TaskBug newSelection = dataset.getTaskBugByTitle(entityTitle);
+			project.setSelectedTaskBug(newSelection);
 		} else if (chartEntity instanceof CategoryLabelEntity) {
 			CategoryLabelEntity entity = (CategoryLabelEntity) chartEntity;
 			String entityTitle = (String) entity.getKey();
 			
-			fireTaskBugSelected(dataset.getTaskBugByTitle(entityTitle));
+			TaskBug newSelection = dataset.getTaskBugByTitle(entityTitle);
+			project.setSelectedTaskBug(newSelection);
 		} else if (chartEntity instanceof TitleEntity) {
 			// Selecting the title always selects the project, no need to inspect the entity since
 			// there is only one project per chart.
 			fireProjectSelected(project);
 		} else {
 			// Send null to clear out selection
-			fireTaskBugSelected(null);
+			project.setSelectedTaskBug(null);
 		}
 	}
 
@@ -152,7 +140,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	}
 	
 	public void deleteSelectedElement() {
-		TaskBug selectedTaskBug = dataset.getSelectedTaskBug();
+		TaskBug selectedTaskBug = project.getSelectedTaskBug();
 		if (selectedTaskBug != null) {
 			fireDeletionRequested();
 		}
@@ -183,14 +171,7 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	}
 
 	public TaskBug getSelectedTaskBug() {
-		return dataset.getSelectedTaskBug();
-	}
-
-	@Override
-	public void taskBugSelected(TaskBug taskBug) {
-		dataset.getTaskBugByTitle(taskBug.getTitle());
-		fireTaskBugSelected(taskBug);
-		chartPanel.revalidate();
+		return project.getSelectedTaskBug();
 	}
 }
  
