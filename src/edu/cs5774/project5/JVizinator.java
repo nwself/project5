@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -136,6 +137,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         for (Project project : rssObject.getChannel().getItem()) {
         	project.setSavedPath(savedPath);
         	createNewTab(project);
+
+            if (savedPath != null) {
+        		String tabTitle = getTabTitle(project);
+        		int tabIndex = tabbedPane.indexOfTab(tabTitle); 
+        		tabbedPane.setSelectedIndex(tabIndex);
+            }
         }
 	}
 	
@@ -170,17 +177,30 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		}
 	}
 	
-	private void createNewTab(Project project) {
-		String tabTitle = project.getName();
-		int tabIndex = tabbedPane.indexOfTab(tabTitle); 
+	private String getTabTitle(Project project) {
+		String tabTitle;
 		
-		if (tabIndex == -1) {
+		String savedPath = project.getSavedPath();
+		if (savedPath != null) {
+			String[] split = savedPath.split("/");
+			tabTitle = split[split.length - 1];
+		} else {
+			tabTitle = project.getName();
+		}
+		return tabTitle;
+	}
+	
+	private void createNewTab(Project project) {
+		String tabTitle = getTabTitle(project);
+		int tabIndex = tabbedPane.indexOfTab(tabTitle);
+		
+		if (tabIndex == -1 || project.getSavedPath() == null) {
 			DocumentPane docPane = new DocumentPane(project);
 			docPane.addUndoRedoEnabledListener(this);
 			
 			tabbedPane.addTab(tabTitle, docPane);
 			
-			int newTabIndex = tabbedPane.indexOfTab(tabTitle);
+			int newTabIndex = tabbedPane.indexOfComponent(docPane);
 		    tabbedPane.setTabComponentAt(newTabIndex, new ButtonTabComponent(tabbedPane));
 		} else {
 			tabbedPane.setSelectedIndex(tabIndex);
@@ -233,7 +253,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         fileMenu.add(saveItem);         
         //Save as 
         JMenuItem saveAsItem = new JMenuItem("Save As", KeyEvent.VK_A);
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
         saveAsItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -423,7 +443,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		int returnVal = fileChooser.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String fileName = fileChooser.getSelectedFile().getName();
+			String fileName = fileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				openFilesFromStream(new FileInputStream(new File(fileName)), fileName);
 			} catch (FileNotFoundException noFileException) {
