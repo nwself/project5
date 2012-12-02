@@ -19,6 +19,7 @@ import java.util.Set;
 
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -40,6 +41,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.protocol.HttpContext;
+
 
 public class JVizinator extends JFrame implements ActionEnabledListener {
 	
@@ -205,6 +207,9 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         fileMenu.add(saveItem);
         fileMenu.addSeparator();
          
+        //Save as 
+        JMenuItem saveasItem = new JMenuItem("Save As", KeyEvent.VK_A);
+        
         // Close current tab
         closeItem = new JMenuItem("Close Tab", KeyEvent.VK_C);
         closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
@@ -282,9 +287,33 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		return menuBar;
 	}
-	
+	public class XMLFileFilter extends FileFilter
+	{
+	     public boolean accept(File f)
+	    {
+	    	 System.out.println(f.getName());
+	    	  if (f.getName().endsWith(".xml")||f.isDirectory())
+	    	 {
+	    		 System.out.println("xml");
+	    		 return true;
+	    	 }
+	    	 else return false;
+	    }
+	 
+	    public String getDescription()
+	    {
+	        return "XML files (*.xml)";
+	    }
+	}
 	protected void saveFile() {
-		String fileName = "text.out"; // TODO: use JFileChooser to get filename
+		JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setFileFilter(new XMLFileFilter());
+		String fileName="";
+		int returnVal = fileChooser.showSaveDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			if(fileChooser.getSelectedFile()!=null)
+			{		fileName = fileChooser.getSelectedFile().getName();
+	System.out.println(fileName);
 		
 		JAXBContext jaxbContext;
 		try {
@@ -310,6 +339,8 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			showErrorMessage("Could not save file to " + fileName + " JAXB marshalling failed");
+		}
+			}
 		}
 	}
 
