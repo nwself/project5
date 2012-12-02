@@ -139,13 +139,6 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 		}
 	}
 	
-	public void deleteSelectedElement() {
-		TaskBug selectedTaskBug = project.getSelectedTaskBug();
-		if (selectedTaskBug != null) {
-			fireDeletionRequested();
-		}
-	}
-
 	private void fireDeletionRequested() {
 		for (DeletionRequestedListener listener : deletionListeners) {
 			listener.deletionRequested();
@@ -161,17 +154,13 @@ public class GanttChartPane extends JPanel implements ChartMouseListener, KeyLis
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_DELETE ||
 				e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-			deleteSelectedElement();
+			fireDeletionRequested();
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// Do nothing
-	}
-
-	public TaskBug getSelectedTaskBug() {
-		return project.getSelectedTaskBug();
 	}
 }
  

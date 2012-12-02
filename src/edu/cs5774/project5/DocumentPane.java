@@ -45,7 +45,7 @@ public class DocumentPane extends JSplitPane implements ProjectSelectionListener
 		undoStack.push(project);
 		project = new Project(project);
 		
-		TaskBug selectedTaskBug = ganttPane.getSelectedTaskBug();
+		TaskBug selectedTaskBug = project.getSelectedTaskBug();
 		
 		if (selectedTaskBug != null) {
 			project.removeTask(selectedTaskBug);
