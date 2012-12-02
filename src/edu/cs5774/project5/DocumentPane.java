@@ -5,7 +5,7 @@ import java.util.Stack;
 
 import javax.swing.JSplitPane;
 
-public class DocumentPane extends JSplitPane implements ProjectSelectionListener, DeletionRequestedListener {
+public class DocumentPane extends JSplitPane implements ProjectSelectionListener, DeletionRequestedListener, TaskBugSelectionListener {
 
 	private static final long serialVersionUID = -924992963282055777L;
 
@@ -28,6 +28,7 @@ public class DocumentPane extends JSplitPane implements ProjectSelectionListener
 		this.setLeftComponent(ganttPane);
 		this.setRightComponent(detailsPane);
 
+		project.addTaskBugSelectionListener(this);
 		
 		ganttPane.addProjectSelectionListener(this);
 		ganttPane.addDeletionRequestedListener(this);
@@ -95,5 +96,10 @@ public class DocumentPane extends JSplitPane implements ProjectSelectionListener
 
 	public Project getProject() {
 		return project;
+	}
+
+	@Override
+	public void taskBugSelected(TaskBug taskBug) {
+		fireDeleteEnabled(true);
 	}
 }

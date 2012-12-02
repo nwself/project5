@@ -43,7 +43,9 @@ public class Project {
 		this.createdAt = other.createdAt;
 		this.updatedAt = other.updatedAt;
 		this.savedPath = other.savedPath;
+		this.selectedTaskBug = other.selectedTaskBug;
 		
+		this.listeners.addAll(other.listeners);
 		this.users.addAll(other.users);
 		this.task.addAll(other.task);
 		this.bug.addAll(other.bug);
