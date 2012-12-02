@@ -119,7 +119,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		return response;
 	}
 	
-	private void openFilesFromStream(InputStream inputStream) throws JAXBException {
+	private void openFilesFromStream(InputStream inputStream, String savedPath) throws JAXBException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
         
         SchemaOutputResolver sor = new MySchemaOutputResolver();
@@ -134,6 +134,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
         Rss rssObject = (Rss) jaxbUnmarshaller.unmarshal(inputStream);
         
         for (Project project : rssObject.getChannel().getItem()) {
+        	project.setSavedPath(savedPath);
         	createNewTab(project);
         }
 	}
@@ -153,7 +154,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		if (response != null) {
 			try {
-				openFilesFromStream(response.getEntity().getContent());
+				openFilesFromStream(response.getEntity().getContent(), null);
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
 				showErrorMessage("IllegalStateException thrown");
@@ -226,15 +227,23 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveFile();
+				saveFile(false);
 			}
 		});
-        fileMenu.add(saveItem);
-        fileMenu.addSeparator();
-         
+        fileMenu.add(saveItem);         
         //Save as 
-        JMenuItem saveasItem = new JMenuItem("Save As", KeyEvent.VK_A);
-         
+        JMenuItem saveAsItem = new JMenuItem("Save As", KeyEvent.VK_A);
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        saveAsItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveFile(true);
+			}
+		});
+        fileMenu.add(saveAsItem);
+        fileMenu.addSeparator();
+        
         // Close current tab
         closeItem = new JMenuItem("Close Tab", KeyEvent.VK_C);
         closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
@@ -330,16 +339,29 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	        return "XML files (*.xml)";
 	    }
 	}
-	protected void saveFile() {
-		JFileChooser fileChooser = new JFileChooser();
-	    fileChooser.setFileFilter(new XMLFileFilter());
-		String fileName="";
-		int returnVal = fileChooser.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			if(fileChooser.getSelectedFile()!=null)
-			{		fileName = fileChooser.getSelectedFile().getName();
-	System.out.println(fileName);
+	protected void saveFile(boolean saveAs) {
+		Component selectedComponent = tabbedPane.getSelectedComponent();
+		DocumentPane docPane = (DocumentPane) selectedComponent;
+		Project project = docPane.getProject();
 		
+		String fileName = project.getSavedPath(); 
+		if (saveAs || fileName == null) {
+			JFileChooser fileChooser = new JFileChooser();
+		    fileChooser.setFileFilter(new XMLFileFilter());
+			int returnVal = fileChooser.showSaveDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				if(fileChooser.getSelectedFile() != null)
+				{
+					fileName = fileChooser.getSelectedFile().getName();
+					System.out.println(fileName);
+				}
+			}
+		}
+		
+		if (fileName == null) {
+			return;
+		}
+				
 		JAXBContext jaxbContext;
 		try {
 			jaxbContext = JAXBContext.newInstance(Rss.class);
@@ -348,9 +370,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			Channel channel = new Channel();
 			
 			LinkedList<Project> projectList = new LinkedList<Project>();
-			Component selectedComponent = tabbedPane.getSelectedComponent();
-			DocumentPane docPane = (DocumentPane) selectedComponent;
-			projectList.add(docPane.getProject());
+			projectList.add(project);
 
 			channel.setItem(projectList);
 			
@@ -361,11 +381,10 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.marshal(rssObject, outputFile);
 
+			project.setSavedPath(fileName);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			showErrorMessage("Could not save file to " + fileName + " JAXB marshalling failed");
-		}
-			}
 		}
 	}
 
@@ -399,7 +418,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String fileName = fileChooser.getSelectedFile().getName();
 			try {
-				openFilesFromStream(new FileInputStream(new File(fileName)));
+				openFilesFromStream(new FileInputStream(new File(fileName)), fileName);
 			} catch (FileNotFoundException noFileException) {
 				noFileException.printStackTrace();
 				showErrorMessage("No such file: " + fileName);

@@ -21,6 +21,8 @@ public class Project {
 	private LinkedList<TaskBug> task = new LinkedList<TaskBug>();
 	private LinkedList<TaskBug> bug = new LinkedList<TaskBug>();
 	
+	private String savedPath;
+	
 	public Project() {}
 
 	public Project(String name, String description, Calendar createdAt,
@@ -37,11 +39,20 @@ public class Project {
 		this.description = other.description;
 		this.createdAt = other.createdAt;
 		this.updatedAt = other.updatedAt;
+		this.savedPath = other.savedPath;
 		
 		this.users.addAll(other.users);
 		this.task.addAll(other.task);
 		this.bug.addAll(other.bug);
-		
+	}
+
+	
+	public String getSavedPath() {
+		return savedPath;
+	}
+
+	public void setSavedPath(String savedPath) {
+		this.savedPath = savedPath;
 	}
 
 	public void addUser(User user) {
