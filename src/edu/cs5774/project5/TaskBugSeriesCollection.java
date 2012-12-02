@@ -1,6 +1,7 @@
 package edu.cs5774.project5;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
@@ -12,7 +13,7 @@ public class TaskBugSeriesCollection extends TaskSeriesCollection implements Tas
 	private static final long serialVersionUID = 4675461723005553511L;
 	private HashMap<String, TaskBug> taskBugs = new HashMap<String, TaskBug>();
 	private GanttSelectionRenderer ganttSelectionRenderer;
-
+	
 	public TaskBugSeriesCollection(Project project, GanttSelectionRenderer ganttSelectionRenderer) {
 		this.ganttSelectionRenderer = ganttSelectionRenderer;
 		
@@ -23,26 +24,27 @@ public class TaskBugSeriesCollection extends TaskSeriesCollection implements Tas
 		TaskSeries taskSeries = new TaskSeries("Tasks");
 		TaskSeries bugSeries = new TaskSeries("Bugs");
 		
-		for (TaskBug taskBug : project.getTask()) {
-			Task chartTask = new Task(taskBug.getTitle(), 
-					new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime()));
-			chartTask.setPercentComplete(taskBug.getPercentageCompleted() / 100.0);
-		    
-			// Add to appropriate task series
-			if (taskBug.isTask()) {
-		    	taskSeries.add(chartTask);
-		    } else {
-		    	bugSeries.add(chartTask);
-		    }
-			
-			taskBugs.put(taskBug.getTitle(), taskBug);
-		}
-		
+		addTaskBugsToSeries(project.getTask(), taskSeries);
+		addTaskBugsToSeries(project.getBug(), bugSeries);
+
 		// Add them to `this` (NOTE: I am a TaskSeriesCollection)
         this.add(taskSeries);
         this.add(bugSeries);
 	}
 
+	private void addTaskBugsToSeries(List<TaskBug> taskBugList, TaskSeries series) {
+		for (TaskBug taskBug : taskBugList) {
+			Task chartTask = new Task(taskBug.getTitle(), 
+					new SimpleTimePeriod(taskBug.getCreatedAt().getTime(), taskBug.getDueDate().getTime()));
+			chartTask.setPercentComplete(taskBug.getPercentageCompleted() / 100.0);
+		    
+			// Add to appropriate task series
+			series.add(chartTask);
+			
+			taskBugs.put(taskBug.getTitle(), taskBug);
+		}
+	}
+	
 	public TaskBug getTaskBugByTitle(String taskBugTitle) {
 		TaskBug selectedTaskBug = null;
 		

@@ -16,13 +16,10 @@ public class Project {
 
 	private Calendar updatedAt;
 	
-
 	private LinkedList<User> users = new LinkedList<User>();
-	
 	
 	private LinkedList<TaskBug> task = new LinkedList<TaskBug>();
 	private LinkedList<TaskBug> bug = new LinkedList<TaskBug>();
-	
 	
 	public Project() {}
 
@@ -56,7 +53,11 @@ public class Project {
 	}
 
 	public void removeTask(TaskBug taskBug) {
-		task.remove(taskBug);
+		if (task.contains(taskBug)) {
+			task.remove(taskBug);
+		} else {
+			bug.remove(taskBug);
+		}
 	}
 	
 	public void addBug(TaskBug taskBug) {
@@ -64,7 +65,11 @@ public class Project {
 	}
 
 	public void removeBug(TaskBug taskBug) {
-		bug.remove(taskBug);
+		if (task.contains(taskBug)) {
+			task.remove(taskBug);
+		} else {
+			bug.remove(taskBug);
+		}
 	}
 	
 	@XmlElement(name="title")
