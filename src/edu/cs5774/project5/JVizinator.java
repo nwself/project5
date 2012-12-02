@@ -317,11 +317,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	     public boolean accept(File f)
 	    {
 	    	 System.out.println(f.getName());
-	    	  if (f.getName().endsWith(".xml")||f.isDirectory())
+	    	  if (f.isDirectory())
 	    	 {
 	    		 System.out.println("xml");
 	    		 return true;
 	    	 }
+	    	 else if(f.isFile()&&f.getName().endsWith(".xml")) return true;
 	    	 else return false;
 	    }
 	
@@ -332,13 +333,20 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	}
 	protected void saveFile() {
 		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setAcceptAllFileFilterUsed(false);
 	    fileChooser.setFileFilter(new XMLFileFilter());
 		String fileName="";
+		String path="";
+		
 		int returnVal = fileChooser.showSaveDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			if(fileChooser.getSelectedFile()!=null)
-			{		fileName = fileChooser.getSelectedFile().getName();
-	System.out.println(fileName);
+			{		fileName=fileChooser.getSelectedFile().getAbsolutePath();
+					
+					if(!fileName.endsWith(".xml"))
+						showErrorMessage("Must have an XMl extension");
+	
+					System.out.println(fileName);
 		
 		JAXBContext jaxbContext;
 		try {
