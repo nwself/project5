@@ -243,7 +243,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		});
         fileMenu.add(saveAsItem);
         fileMenu.addSeparator();
-        
+         
         // Close current tab
         closeItem = new JMenuItem("Close Tab", KeyEvent.VK_C);
         closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
@@ -326,11 +326,12 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 	     public boolean accept(File f)
 	    {
 	    	 System.out.println(f.getName());
-	    	  if (f.getName().endsWith(".xml")||f.isDirectory())
+	    	  if (f.isDirectory())
 	    	 {
 	    		 System.out.println("xml");
 	    		 return true;
 	    	 }
+	    	 else if(f.isFile()&&f.getName().endsWith(".xml")) return true;
 	    	 else return false;
 	    }
 	
@@ -347,12 +348,18 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		String fileName = project.getSavedPath(); 
 		if (saveAs || fileName == null) {
 			JFileChooser fileChooser = new JFileChooser();
-		    fileChooser.setFileFilter(new XMLFileFilter());
+			fileChooser.setAcceptAllFileFilterUsed(false);
+			fileChooser.setFileFilter(new XMLFileFilter());
+		
 			int returnVal = fileChooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				if(fileChooser.getSelectedFile() != null)
+				if(fileChooser.getSelectedFile()!=null)
 				{
-					fileName = fileChooser.getSelectedFile().getName();
+					fileName=fileChooser.getSelectedFile().getAbsolutePath();
+					
+					if(!fileName.endsWith(".xml"))
+						showErrorMessage("Must have an XMl extension");
+	
 					System.out.println(fileName);
 				}
 			}
