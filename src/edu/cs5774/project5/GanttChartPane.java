@@ -20,6 +20,12 @@ import org.jfree.chart.entity.TitleEntity;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.IntervalCategoryDataset;
 
+/**
+ * This is a panel that shows a Gantt chart of all tasks and bugs for a given project.
+ * The tasks and bugs on the chart allow for selection which sets the project's selected
+ * TaskBug which fires the event to any listeners.
+ *
+ */
 public class GanttChartPane extends JPanel implements ChartMouseListener, KeyListener {
 
 	private static final long serialVersionUID = -1201780568482094473L;

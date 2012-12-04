@@ -5,6 +5,14 @@ import java.util.Stack;
 
 import javax.swing.JSplitPane;
 
+/**
+ * This is the Component that shows everything relating on one "Document" where a 
+ * Document is a view of one Project (which is made of multiple TaskBugs). In particular
+ * a DocumentPane is a JSplitPane with a Gantt chart of the Project's tasks and bugs
+ * on the left and a list of details describing the Project or a selected TaskBug 
+ * on the right.
+ *
+ */
 public class DocumentPane extends JSplitPane implements ProjectSelectionListener, DeletionRequestedListener, TaskBugSelectionListener {
 
 	private static final long serialVersionUID = -924992963282055777L;
@@ -82,7 +90,7 @@ public class DocumentPane extends JSplitPane implements ProjectSelectionListener
 		fireUndoRedoEnabled();
 	}
 
-	public void addUndoRedoEnabledListener(ActionEnabledListener listener) {
+	public void addActionEnabledListener(ActionEnabledListener listener) {
 		if (listener != null) {
 			listeners.add(listener);
 		}

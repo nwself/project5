@@ -6,6 +6,10 @@ import java.util.List;
 
 import com.sun.xml.txw2.annotation.XmlElement;
 
+/**
+ * Class that is owned by the root RSS object, needed for JAXB parsing of RSS feed.
+ *
+ */
 public class Channel {
 	private String title ;
     private String description ;

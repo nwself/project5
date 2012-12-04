@@ -8,6 +8,10 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * Model class that describes Tasks or Bugs belonging to a Project.
+ *
+ */
 public class TaskBug {
 	
 	public TaskBug() {}

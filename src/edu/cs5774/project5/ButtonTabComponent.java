@@ -39,7 +39,7 @@ import java.awt.event.*;
 /**
  * Component to be used as tabComponent;
  * Contains a JLabel to show the text and 
- * a JButton to close the tab it belongs to 
+ * a JButton to close the tab it belongs to.
  */ 
 public class ButtonTabComponent extends JPanel {
 	private static final long serialVersionUID = 2890514178643849339L;

@@ -5,6 +5,12 @@ import java.awt.Paint;
 
 import org.jfree.chart.renderer.category.GanttRenderer;
 
+/**
+ * This class extends the functionality of JFreeChart's GanttRenderer to allow for
+ * selection of entities on the chart by overriding the getItemPaint method to return
+ * Color.yellow for the selected entity.
+ *
+ */
 public class GanttSelectionRenderer extends GanttRenderer {
 	
 	private static final long serialVersionUID = -2472039507871250135L;

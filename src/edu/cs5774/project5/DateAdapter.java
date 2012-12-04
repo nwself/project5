@@ -5,6 +5,10 @@ import java.util.Calendar;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * JAXB XML parsing adapter to convert formatted dates from the RSS feed into Java Calendar objects.
+ *
+ */
 public class DateAdapter extends XmlAdapter<String, Calendar> {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");

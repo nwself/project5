@@ -9,6 +9,12 @@ import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 
+/**
+ * This class extends the functionality of JFreeChart's TaskSeriesCollection to create
+ * a Gantt chart for a Project, i.e. displaying Tasks and Bugs on the chart.  It also
+ * uses a GanttSelectionRenderer on the data to allow for task/bug selection.
+ *
+ */
 public class TaskBugSeriesCollection extends TaskSeriesCollection implements TaskBugSelectionListener, ProjectSelectionListener {
 
 	private static final long serialVersionUID = 4675461723005553511L;

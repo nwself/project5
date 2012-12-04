@@ -7,6 +7,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * This is the model class for Projects.  It is responsible for maintaining a
+ * selected TaskBug and for registering and notifying listeners when the selected
+ * TaskBug changes.
+ *
+ */
 public class Project {
 	private String name;
 	

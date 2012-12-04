@@ -179,7 +179,7 @@ public class JVizinator extends JFrame implements ActionEnabledListener {
 		
 		if (tabIndex == -1 || project.getSavedPath() == null) {
 			DocumentPane docPane = new DocumentPane(project);
-			docPane.addUndoRedoEnabledListener(this);
+			docPane.addActionEnabledListener(this);
 			
 			tabbedPane.addTab(tabTitle, docPane);
 			

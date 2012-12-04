@@ -15,6 +15,12 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * Panel that lists details of a Project or TaskBug when it receives a TaskBug selected event or a
+ * call to display its Project.  When the Project is displayed, buttons are available that fire a
+ * TaskBug selected event.
+ *
+ */
 public class DetailsPane extends JPanel implements TaskBugSelectionListener {
 	
 	private static final long serialVersionUID = 3727883159676314045L;

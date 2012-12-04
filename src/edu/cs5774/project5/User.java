@@ -2,6 +2,10 @@ package edu.cs5774.project5;
 
 import java.util.Calendar;
 
+/**
+ * Model class that describes a User which can be assigned to a Task, Bug or Project.
+ *
+ */
 public class User {
 	private String username;
 	private String email;
